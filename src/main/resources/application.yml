@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username:
-    password:
-    url:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,18 +14,18 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-security:
-  jwt:
-    header:
-    secret:
-    token-validity-in-seconds:
-
-aws:
-  accessKeyId:
-  secretKey:
-  region:
-  s3:
-    bucketName:
+#security:
+#  jwt:
+#    header:
+#    secret:
+#    token-validity-in-seconds:
+#
+#aws:
+#  accessKeyId:
+#  secretKey:
+#  region:
+#  s3:
+#    bucketName:
 
 logging:
   level:
