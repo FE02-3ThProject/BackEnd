@@ -30,12 +30,9 @@ public class Message {
     private Timestamp sendTime;
 
     @ManyToOne
-    @JoinColumn(name = "receive_id")
-    private User receiveId;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "send_id")
-    private User senderId;
 
     // 생성자, 게터, 세터 등 필요한 메서드 추가
 }
