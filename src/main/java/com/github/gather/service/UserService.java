@@ -36,6 +36,7 @@ public class UserService {
                 .phoneNumber(userData.getPhoneNumber())
                 .image(userData.getImage())
                 .userRole(userData.getUserRole())
+                .isDeleted(false)
                 .build();
     }
 

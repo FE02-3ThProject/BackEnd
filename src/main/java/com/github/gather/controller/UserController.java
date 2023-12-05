@@ -31,6 +31,8 @@ public class UserController {
         return ResponseEntity.status(200).body(newUser);
     }
 
+
+
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user){
         UserLoginResponse loginUser = userService.login(user);
