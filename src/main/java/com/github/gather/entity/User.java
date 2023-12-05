@@ -50,7 +50,7 @@ public class User implements UserDetails {
     private Integer lockCount;
 
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
