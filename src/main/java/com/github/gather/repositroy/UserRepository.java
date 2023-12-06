@@ -19,4 +19,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Transactional
     @Query("SELECT u FROM User u WHERE u.isDeleted = false AND u.email =:email")
     Optional<User> findByEmail(@Param("email") String email);
+
+    Boolean existsByEmail(String email);
+
+    Boolean existsByNickname(String nickname);
 }

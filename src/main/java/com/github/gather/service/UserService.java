@@ -7,6 +7,7 @@ import com.github.gather.entity.User;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -66,11 +68,18 @@ public class UserService {
     }
 
 
-    public Boolean checkUser(String email){
+    public Boolean checkUser(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isEmpty();
     }
 
+    public Boolean checkEmail(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
+    public Boolean checkNickname(String nickname) {
+        return !userRepository.existsByNickname(nickname);
+    }
 
 
 }
