@@ -1,10 +1,7 @@
 package com.github.gather.entity;
 
 import com.github.gather.entity.Role.UserRole;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -87,6 +84,7 @@ public class User implements UserDetails {
     }
 
 
+<<<<<<< HEAD
     public UserRole getUserRole() {
         return userRole;
     }
@@ -144,6 +142,8 @@ public class User implements UserDetails {
     }
 
 
+=======
+>>>>>>> 43b7fd1ea5f65719976f6d1670b875c5476ededd
 
 }
 
