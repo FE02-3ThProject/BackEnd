@@ -9,6 +9,7 @@ import com.github.gather.repositroy.ProfileRepository;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.lang.UsesSunHttpServer;
@@ -22,6 +23,7 @@ import com.github.gather.entity.User;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -72,10 +74,11 @@ public class UserService {
     }
 
 
-    public Boolean checkUser(String email){
+    public Boolean checkUser(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.isEmpty();
     }
+
 
     @Transactional
     public UserDTO getUserInfoByEmail(String email) {
@@ -99,6 +102,15 @@ public class UserService {
         userDTO.setNickname((userDTO.getNickname()));
         userDTO.setEmail(user.getEmail());
         // 다른 필요한 정보들을 매핑
+
+    public Boolean checkEmail(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
+    public Boolean checkNickname(String nickname) {
+        return !userRepository.existsByNickname(nickname);
+    }
+
 
         return userDTO;
     }

@@ -33,7 +33,18 @@ public class UserController {
         userRepository.save(newUser);
         return ResponseEntity.status(200).body(newUser);
     }
+    
 
+    @GetMapping("/{email}/existsEmail")
+    public ResponseEntity<Boolean> checkEmail(@PathVariable String email){
+        return ResponseEntity.ok(userService.checkEmail(email));
+    }
+
+
+    @GetMapping("/{nickname}/existsNickname")
+    public ResponseEntity<Boolean> checkNickname(@PathVariable String nickname){
+        return ResponseEntity.ok(userService.checkNickname(nickname));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
