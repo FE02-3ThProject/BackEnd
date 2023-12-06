@@ -45,19 +45,34 @@ public class UserService {
                 .image(userData.getImage())
                 .userRole(userData.getUserRole())
                 .isDeleted(false)
+                .isLocked(false)
                 .build();
     }
-
-    public  UserLoginResponse login(UserLoginRequest user) {
+    
+    public UserLoginResponse login(UserLoginRequest user) {
         User loginUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
                 () -> new BadCredentialsException("이메일을 다시 확인해주세요.")
         );
 
+        if (loginUser.getIsLocked()) {
+            throw new LockedException("계정이 잠겨있습니다.");
+        }
+
         if (!passwordEncoder.matches(user.getPassword(), loginUser.getPassword())) {
+            // 비밀번호 오류 처리
+            loginUser.setLockCount(loginUser.getLockCount() + 1);
+            if (loginUser.getLockCount() >= 5) {
+                loginUser.setIsLocked(true);
+                userRepository.save(loginUser);
+                throw new LockedException("비밀번호 5회 이상 틀려 계정이 잠겼습니다.");
+            }
+            userRepository.save(loginUser);
             throw new BadCredentialsException("비밀번호를 다시 확인해주세요.");
         }
 
-
+        // 정상 로그인 처리
+        loginUser.setLockCount(0);
+        loginUser.setIsLocked(false);
         userRepository.save(loginUser);
 
         String newToken = jwtTokenProvider.createToken(loginUser);
