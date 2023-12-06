@@ -94,6 +94,14 @@ public class UserService {
         return user.isEmpty();
     }
 
+    public Boolean checkEmail(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
+    public Boolean checkNickname(String nickname) {
+        return !userRepository.existsByNickname(nickname);
+    }
+
 
     @Transactional
     public UserDTO getUserInfoByEmail(String email) {
@@ -117,16 +125,6 @@ public class UserService {
         userDTO.setNickname((userDTO.getNickname()));
         userDTO.setEmail(user.getEmail());
         // 다른 필요한 정보들을 매핑
-
-    public Boolean checkEmail(String email) {
-        return !userRepository.existsByEmail(email);
-    }
-
-    public Boolean checkNickname(String nickname) {
-        return !userRepository.existsByNickname(nickname);
-    }
-
-
         return userDTO;
     }
 
