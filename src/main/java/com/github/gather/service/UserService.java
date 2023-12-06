@@ -42,32 +42,7 @@ public class UserService {
                 .isLocked(false)
                 .build();
     }
-
-//    public  UserLoginResponse login(UserLoginRequest user) {
-//        User loginUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
-//                () -> new BadCredentialsException("이메일을 다시 확인해주세요.")
-//        );
-//
-//        if (!passwordEncoder.matches(user.getPassword(), loginUser.getPassword())) {
-//            throw new BadCredentialsException("비밀번호를 다시 확인해주세요.");
-//        }
-//
-//
-//        userRepository.save(loginUser);
-//
-//        String newToken = jwtTokenProvider.createToken(loginUser);
-//
-//        return UserLoginResponse.builder()
-//                .email(loginUser.getEmail())
-//                .nickname(loginUser.getNickname())
-//                .phoneNumber(loginUser.getPhoneNumber())
-//                .location(loginUser.getLocationId())
-//                .userRole(loginUser.getUserRole())
-//                .image(loginUser.getImage())
-//                .token(newToken)
-//                .build();
-//    }
-
+    
     public UserLoginResponse login(UserLoginRequest user) {
         User loginUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
                 () -> new BadCredentialsException("이메일을 다시 확인해주세요.")
