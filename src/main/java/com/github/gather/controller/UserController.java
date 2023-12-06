@@ -9,10 +9,7 @@ import com.github.gather.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.HashMap;
@@ -33,8 +30,17 @@ public class UserController {
         userRepository.save(newUser);
         return ResponseEntity.status(200).body(newUser);
     }
+    
 
+    @GetMapping("/{email}/existsEmail")
+    public ResponseEntity<Boolean> checkEmail(@PathVariable String email){
+        return ResponseEntity.ok(userService.checkEmail(email));
+    }
 
+    @GetMapping("/{nickname}/existsNickname")
+    public ResponseEntity<Boolean> checkNickname(@PathVariable String nickname){
+        return ResponseEntity.ok(userService.checkNickname(nickname));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user){
