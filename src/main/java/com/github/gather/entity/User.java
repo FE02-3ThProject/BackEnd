@@ -11,6 +11,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Entity
 @Builder
 @Table(name = "user")
