@@ -23,10 +23,6 @@ public class Message {
     @JoinColumn(name = "room_id")
     private ChatRoom roomId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(name = "content")
     private String content;
 
