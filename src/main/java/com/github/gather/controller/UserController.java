@@ -1,10 +1,12 @@
 package com.github.gather.controller;
 
 import com.github.gather.dto.UserDTO;
+import com.github.gather.dto.request.UserEditRequest;
 import com.github.gather.dto.request.UserLoginRequest;
 import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
 import com.github.gather.entity.User;
+import com.github.gather.exception.UserRuntimeException;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +25,10 @@ import java.util.Map;
 @RequestMapping("/api/user")
 public class UserController {
 
+    @Autowired
     private final UserService userService;
     private final UserRepository userRepository;
+
 
     @Transactional
     @PostMapping(value = "/signup")
@@ -66,19 +70,27 @@ public class UserController {
     }
 
 
+    // 회원 정보 조회
     @GetMapping("/info")
     public ResponseEntity<UserDTO> getUserInfo(@RequestParam String email) {
         // email 값을 사용하여 정보를 조회 로직을 수행
-        // 이 부분에서 userService를 이용하여 실제 로직을 수행할 것
-        UserDTO userinfo = userService.getUserInfoByEmail(email);
-
-        if (userinfo != null) {
-            // 정상적으로 사용자 정보를 가져왔을 경우 200으로 OK응답을 반환
+        try {
+            UserDTO userinfo = userService.getUserInfoByEmail(email);
             return ResponseEntity.ok(userinfo);
-        } else {
-            // 사용자 정보를 찾을 수 없는 경우 404 Not Found 응답을 반환
+        } catch (UserRuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
 
+    @PutMapping("/edit")
+    public ResponseEntity<UserDTO> editUserInfo(@RequestBody UserEditRequest userEditRequest) {
+        try {
+            // 사용자 정보 수정 로직을 수행하고 수정된 정보를 반환
+            UserDTO updatedUser = userService.editInfo(userEditRequest);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserRuntimeException e) {
+            // 사용자를 찾지 못한 경우 404 Not Found 응답을 반환
+            return ResponseEntity.notFound().build();
+        }
     }
 }
