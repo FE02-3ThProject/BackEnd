@@ -17,9 +17,6 @@ public class UserGroup {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private GroupTable group;
-    public GroupTable getGroup(){
-        return group;
-    }
 
     @Column(name = "email")
     private String email;
