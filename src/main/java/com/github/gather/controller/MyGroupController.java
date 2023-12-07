@@ -25,12 +25,12 @@ public class MyGroupController {
     }
 
 
-    @GetMapping("/mygroup")
-    public ResponseEntity<List<MyGroupResponse>> getMyGroups(@RequestParam String userEmail) {
-        MyGroupRequest myGroupRequest = new MyGroupRequest();
-        MyGroupRequest.setUserEmail(userEmail);
-
-        List<MyGroupResponse> myGroups = userGroupService.getMyGroups(myGroupRequest);
-        return ResponseEntity.ok(myGroups);
-    }
+//    @GetMapping("/mygroup")
+//    public ResponseEntity<List<MyGroupResponse>> getMyGroups(@RequestParam String userEmail) {
+//        MyGroupRequest myGroupRequest = new MyGroupRequest();
+//        MyGroupRequest.setUserEmail(userEmail);
+//
+//        List<MyGroupResponse> myGroups = userGroupService.getMyGroups(myGroupRequest);
+//        return ResponseEntity.ok(myGroups);
+//    }
 }

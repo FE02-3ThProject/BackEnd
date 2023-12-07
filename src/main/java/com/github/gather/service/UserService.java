@@ -13,6 +13,7 @@ import com.github.gather.repositroy.ProfileRepository;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DeferredImportSelector;
@@ -113,10 +114,6 @@ public class UserService {
 
 
     // 회원 정보 조회
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     public UserDTO getUserInfoByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserRuntimeException("회원 정보를 찾을 수 없습니다."));

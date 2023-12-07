@@ -29,20 +29,20 @@ public class UserGroupService {
         this.userRepository = userRepository;
     }
 
-    public List<MyGroupResponse> getMyGroups(MyGroupRequest myGroupRequest) {
-        String userEmail = myGroupRequest.getUserEmail();
-        List<UserGroup> userGroups = userGroupRepository.findByUserEmail(userEmail);
-
-        return userGroups.stream()
-                .map(userGroup -> {
-                    MyGroupResponse myGroupResponse = new MyGroupResponse();
-                    MyGroupResponse.setGroupId(userGroup.getGroup().getId());
-                    MyGroupResponse.setGroupName(userGroup.getGroup().getName());
-
-                    // 다른 필요한 정보들을 설정
-                    return myGroupResponse;
-                })
-                .collect(Collectors.toList());
+//    public List<MyGroupResponse> getMyGroups(MyGroupRequest myGroupRequest) {
+//        String userEmail = myGroupRequest.getUserEmail();
+//        List<UserGroup> userGroups = userGroupRepository.findByUserEmail(userEmail);
+//
+//        return userGroups.stream()
+//                .map(userGroup -> {
+//                    MyGroupResponse myGroupResponse = new MyGroupResponse();
+//                    MyGroupResponse.setGroupId(userGroup.getGroup().getId());
+//                    MyGroupResponse.setGroupName(userGroup.getGroup().getName());
+//
+//                    // 다른 필요한 정보들을 설정
+//                    return myGroupResponse;
+//                })
+//                .collect(Collectors.toList());
 
     }
-}
+
