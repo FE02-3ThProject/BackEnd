@@ -23,11 +23,11 @@ spring:
 #    token-validity-in-seconds:
 #
 #aws:
-#  accessKeyId:
-#  secretKey:
-#  region:
+#  accessKeyId:AKIA2WSJ73WOI2ZIWIMW
+#  secretKey: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
+#  region:ap-northeast-2
 #  s3:
-#    bucketName:
+#    bucketName:project2team
 
 logging:
   level:
