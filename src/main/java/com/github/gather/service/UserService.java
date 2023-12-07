@@ -8,11 +8,14 @@ import com.github.gather.dto.response.UserLoginResponse;
 import com.github.gather.entity.Location;
 import com.github.gather.entity.Role.UserRole;
 import com.github.gather.exception.UserRuntimeException;
+import com.github.gather.repositroy.GroupRepository;
 import com.github.gather.repositroy.ProfileRepository;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.Group;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DeferredImportSelector;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.lang.UsesSunHttpServer;
@@ -24,7 +27,9 @@ import org.springframework.stereotype.Service;
 import com.github.gather.entity.User;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.swing.*;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -126,6 +131,14 @@ public class UserService {
         user.setLocation(user.getLocationId());
 
         return userDTO;
+    }
+
+    public List<Group> getAllGroups() {
+        return groupRepository.findAll();
+    }
+
+    public Group getGroupById(Long groupID) {
+        return groupRepository.findById(groupId).orElse(null);
     }
 
 }

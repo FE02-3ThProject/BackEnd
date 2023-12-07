@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -54,6 +55,17 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    public List<UserGroup> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(List<UserGroup> userGroups) {
+        this.userGroups = userGroups;
+    }
+
+    @OneToMany(mappedBy = "user")
+    private List<UserGroup> userGroups;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -85,7 +97,6 @@ public class User implements UserDetails {
     }
 
 
-<<<<<<< HEAD
     public UserRole getUserRole() {
         return userRole;
     }
@@ -142,9 +153,6 @@ public class User implements UserDetails {
         this.image = image;
     }
 
-
-=======
->>>>>>> 43b7fd1ea5f65719976f6d1670b875c5476ededd
 
 }
 
