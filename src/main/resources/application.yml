@@ -14,7 +14,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-  secret-key: ${SECRET-KEY}
+  secret-key: ${EIGmAvkGbdSKIddN/cuzWovuIM2t79kbwD4AACKN}
 
 #security:
 #  jwt:
