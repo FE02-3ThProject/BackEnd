@@ -1,19 +1,15 @@
 package com.github.gather.controller;
 
-import com.github.gather.dto.UserDTO;
-import com.github.gather.dto.request.UserEditRequest;
+
 import com.github.gather.dto.request.UserLoginRequest;
 import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
 import com.github.gather.entity.User;
-import com.github.gather.exception.UserRuntimeException;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -70,27 +66,4 @@ public class UserController {
     }
 
 
-    // 회원 정보 조회
-    @GetMapping("/info")
-    public ResponseEntity<UserDTO> getUserInfo(@RequestParam String email) {
-        // email 값을 사용하여 정보를 조회 로직을 수행
-        try {
-            UserDTO userinfo = userService.getUserInfoByEmail(email);
-            return ResponseEntity.ok(userinfo);
-        } catch (UserRuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-//    @PutMapping("/edit")
-//    public ResponseEntity<UserDTO> editUserInfo(@RequestBody UserEditRequest userEditRequest) {
-//        try {
-//            // 사용자 정보 수정 로직을 수행하고 수정된 정보를 반환
-//            UserDTO updatedUser = userService.editInfo(userEditRequest);
-//            return ResponseEntity.ok(updatedUser);
-//        } catch (UserRuntimeException e) {
-//            // 사용자를 찾지 못한 경우 404 Not Found 응답을 반환
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 }

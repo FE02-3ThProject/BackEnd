@@ -1,10 +1,8 @@
 package com.github.gather.service;
 
-import com.github.gather.dto.UserDTO;
 import com.github.gather.dto.request.UserLoginRequest;
 import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
-import com.github.gather.exception.UserRuntimeException;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
