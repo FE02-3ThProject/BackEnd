@@ -115,25 +115,25 @@ public class UserService {
 
 
     // 회원 정보 수정
-    public UserDTO editInfo(UserEditRequest userEditRequest) {
-        User user = userRepository.findByEmail(userEditRequest.getEmail())
-                .orElseThrow(() -> new UserRuntimeException("회원 정보를 찾을 수 없습니다."));
+//    public UserDTO editInfo(UserEditRequest userEditRequest) {
+//        User user = userRepository.findByEmail(userEditRequest.getEmail())
+//                .orElseThrow(() -> new UserRuntimeException("회원 정보를 찾을 수 없습니다."));
+//
+//        // 사용자 정보 업데이트
+//        user.setNickname(userEditRequest.getEditnickname());
+//        user.setEmail(userEditRequest.getEditemail());
+//        user.setPassword(userEditRequest.getEditpassword());
+//        user.setPhoneNumber(userEditRequest.getEditphoneNumber());
+//        user.setImage(userEditRequest.getEditimage());
+//        user.setUserRole(userEditRequest.getEdituserRole());
+//        user.setLocation(userEditRequest.getEditlocation());
+//
+//        User updatedUser = userRepository.save(user);
+//        return mapUserToDTO(updatedUser);
+//    }
 
-        // 사용자 정보 업데이트
-        user.setNickname(userEditRequest.getEditnickname());
-        user.setEmail(userEditRequest.getEditemail());
-        user.setPassword(userEditRequest.getEditpassword());
-        user.setPhoneNumber(userEditRequest.getEditphoneNumber());
-        user.setImage(userEditRequest.getEditimage());
-        user.setUserRole(userEditRequest.getEdituserRole());
-        user.setLocation(userEditRequest.getEditlocation());
 
-        User updatedUser = userRepository.save(user);
-        return mapUserToDTO(updatedUser);
-    }
-
-
-    // 수정한 정보 업데이트
+//     수정한 정보 업데이트
     private UserDTO mapUserToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         user.setNickname(user.getNickname());
@@ -142,7 +142,6 @@ public class UserService {
         user.setPhoneNumber(user.getPhoneNumber());
         user.setImage(user.getImage());
         user.setUserRole(user.getUserRole());
-        user.setLocation(user.getLocationId());
 
         return userDTO;
     }

@@ -25,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/api/user")
 public class UserController {
 
-    @Autowired
+
     private final UserService userService;
     private final UserRepository userRepository;
 
@@ -82,15 +82,15 @@ public class UserController {
         }
     }
 
-    @PutMapping("/edit")
-    public ResponseEntity<UserDTO> editUserInfo(@RequestBody UserEditRequest userEditRequest) {
-        try {
-            // 사용자 정보 수정 로직을 수행하고 수정된 정보를 반환
-            UserDTO updatedUser = userService.editInfo(userEditRequest);
-            return ResponseEntity.ok(updatedUser);
-        } catch (UserRuntimeException e) {
-            // 사용자를 찾지 못한 경우 404 Not Found 응답을 반환
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @PutMapping("/edit")
+//    public ResponseEntity<UserDTO> editUserInfo(@RequestBody UserEditRequest userEditRequest) {
+//        try {
+//            // 사용자 정보 수정 로직을 수행하고 수정된 정보를 반환
+//            UserDTO updatedUser = userService.editInfo(userEditRequest);
+//            return ResponseEntity.ok(updatedUser);
+//        } catch (UserRuntimeException e) {
+//            // 사용자를 찾지 못한 경우 404 Not Found 응답을 반환
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 }
