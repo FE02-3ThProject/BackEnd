@@ -1,39 +1,21 @@
 package com.github.gather.dto.response;
 
+import com.github.gather.entity.Location;
+import lombok.*;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserInfoResponse {
 
     private Long userId;
-    private String email;
     private String nickname;
+    private String email;
+    private String password;
+    private String phoneNumber;
+    private String image;
+    private Location locationId;
 
-    public UserInfoResponse(Long userId, String email, String nickname) {
-        this.userId = userId;
-        this.email = email;
-        this.nickname = nickname;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
 
 }
