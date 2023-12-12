@@ -6,6 +6,7 @@ import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
 import com.github.gather.entity.User;
 import com.github.gather.repositroy.UserRepository;
+import com.github.gather.security.TokenContext;
 import com.github.gather.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -35,18 +36,20 @@ public class UserController {
     }
     
 
+    @Transactional
     @GetMapping("/{email}/existsEmail")
     public ResponseEntity<Boolean> checkEmail(@PathVariable String email){
         return ResponseEntity.ok(userService.checkEmail(email));
     }
 
 
+    @Transactional
     @GetMapping("/{nickname}/existsNickname")
     public ResponseEntity<Boolean> checkNickname(@PathVariable String nickname){
         return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
-
+    @Transactional
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
         UserLoginResponse loginUser = userService.login(user);
@@ -60,10 +63,28 @@ public class UserController {
         response.put("image", loginUser.getImage());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(loginUser.getToken());
+        headers.setBearerAuth(loginUser.getAccessToken());
+        headers.add("Refresh-Token", loginUser.getRefreshToken());
 
         return ResponseEntity.status(200).headers(headers).body(response);
     }
+
+    @Transactional
+    @PostMapping("/logout")
+    public ResponseEntity<?> userLogout() {
+        Long userId = TokenContext.getProfileId();
+        userService.logout(userId);
+        return ResponseEntity.ok("로그아웃 성공");
+    }
+
+    @Transactional
+    @DeleteMapping("/userDelete")
+    public ResponseEntity<?> userDelete(){
+        Long userIdx = TokenContext.getProfileId();
+        userService.deleteUser(userIdx);
+        return ResponseEntity.ok("회원 탈퇴 성공");
+    }
+
 
 
 }
