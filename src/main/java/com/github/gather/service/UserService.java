@@ -125,7 +125,7 @@ public class UserService {
         userRepository.save(loginUser);
 
         // 기존에 저장된 Refresh Token 조회
-        Optional<RefreshToken> existingRefreshToken = refreshTokenRepository.findByUser(loginUser);
+        Optional<RefreshToken> existingRefreshToken = refreshTokenRepository.findFirstByUserOrderByExpiryDateDesc(loginUser);
 
         String refreshToken;
         if (existingRefreshToken.isPresent() && !isRefreshTokenBlacklisted(existingRefreshToken.get().getToken())) {
