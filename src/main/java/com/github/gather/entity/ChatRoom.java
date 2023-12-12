@@ -1,10 +1,10 @@
 package com.github.gather.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+        import lombok.AllArgsConstructor;
+        import lombok.Getter;
+        import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+        import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -2,6 +2,7 @@ package com.github.gather.entity;
 
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "user_group")
@@ -9,28 +10,34 @@ public class UserGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "group_id")
+    private Long groupId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "group_table_id")
     private GroupTable group;
 
-    public UserGroup(Long id, User user, GroupTable group) {
-        this.id = id;
+    @ManyToMany
+    @JoinTable(name = "user_group_bookmarked_users", joinColumns = @JoinColumn(name = "user_group_id"), inverseJoinColumns = @JoinColumn(name = "bookmarked_user_id"))
+    private List<User> bookmarkedUsers;
+
+    public UserGroup(Long groupId, User user, GroupTable group, List<User> bookmarkedUsers) {
+        this.groupId = groupId;
         this.user = user;
         this.group = group;
+        this.bookmarkedUsers = bookmarkedUsers;
     }
 
-    public Long getId() {
-        return id;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public User getUser() {
@@ -47,5 +54,17 @@ public class UserGroup {
 
     public void setGroup(GroupTable group) {
         this.group = group;
+    }
+
+    public List<User> getBookmarkedUsers() {
+        return bookmarkedUsers;
+    }
+
+    public void setBookmarkedUsers(List<User> bookmarkedUsers) {
+        this.bookmarkedUsers = bookmarkedUsers;
+    }
+
+    public List<User> retrieveBookmarkedUsers() {
+        return bookmarkedUsers;
     }
 }
