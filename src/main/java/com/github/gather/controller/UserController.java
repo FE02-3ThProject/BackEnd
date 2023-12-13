@@ -36,16 +36,15 @@ public class UserController {
     }
 
 
-    @PostMapping("/existsEmail")
-    public ResponseEntity<Boolean> checkEmail(@RequestParam String email){
-        boolean emailExists = userService.checkEmail(email);
-        return ResponseEntity.ok(emailExists);
+    @GetMapping("/{email}/existsEmail")
+    public ResponseEntity<Boolean> checkEmail(@PathVariable String email){
+        return ResponseEntity.ok(userService.checkEmail(email));
     }
 
-    @PostMapping("/existsNickname")
-    public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname){
-        boolean nicknameExists = userService.checkNickname(nickname);
-        return ResponseEntity.ok(nicknameExists);
+
+    @GetMapping("/{nickname}/existsNickname")
+    public ResponseEntity<Boolean> checkNickname(@PathVariable String nickname){
+        return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
 
