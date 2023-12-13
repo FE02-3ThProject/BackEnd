@@ -14,8 +14,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-  secret-key: ${SECRET-KEY}
-
+  secret-key: supercoding
 #security:
 #  jwt:
 #    header:
@@ -32,7 +31,11 @@ spring:
 logging:
   level:
     org.springframework.security: DEBUG
-
+server:
+  port: 9090
+management:
+  server:
+    port: 8080
 
 
 
