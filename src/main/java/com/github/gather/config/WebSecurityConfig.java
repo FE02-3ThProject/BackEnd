@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/user/**").permitAll()
+                .antMatchers("/api/user-group/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(corsConfig.corsFilter()) // ** CorsFilter 등록 **
