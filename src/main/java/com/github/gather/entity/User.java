@@ -4,13 +4,16 @@ import com.github.gather.entity.Role.UserRole;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Entity
 @Builder
 @Table(name = "user")
@@ -53,6 +56,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+
+
+//    @OneToMany(mappedBy = "user")
+//    private List<UserGroup> userGroups;    // UserGroup과 양방향 관계를 맺기 위해 생성
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -84,66 +92,18 @@ public class User implements UserDetails {
     }
 
 
-<<<<<<< HEAD
-    public UserRole getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Location getLocation() {
-        return locationId;
-    }
-
-    public void setLocation(Location location) {
-        this.locationId = location;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
+    // 그룹에 참여한 그룹 목록
+    @ManyToMany
+    @JoinTable(
+            name = "user_group_member",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
+    private Set<UserGroupTable> joinGroups = new HashSet<>();
 
 
-=======
->>>>>>> 43b7fd1ea5f65719976f6d1670b875c5476ededd
-
+    // 북마크한 그룹 목록
+    @ManyToMany(mappedBy = "bookmarkedBy")
+    private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
 }
 

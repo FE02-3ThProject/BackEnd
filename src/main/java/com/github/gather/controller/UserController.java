@@ -1,19 +1,16 @@
 package com.github.gather.controller;
 
-import com.github.gather.dto.UserDTO;
-import com.github.gather.dto.request.UserEditRequest;
+
 import com.github.gather.dto.request.UserLoginRequest;
 import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
 import com.github.gather.entity.User;
-import com.github.gather.exception.UserRuntimeException;
 import com.github.gather.repositroy.UserRepository;
+import com.github.gather.security.TokenContext;
 import com.github.gather.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
@@ -25,7 +22,7 @@ import java.util.Map;
 @RequestMapping("/api/user")
 public class UserController {
 
-    @Autowired
+
     private final UserService userService;
     private final UserRepository userRepository;
 
@@ -39,17 +36,20 @@ public class UserController {
     }
     
 
+    @Transactional
     @GetMapping("/{email}/existsEmail")
     public ResponseEntity<Boolean> checkEmail(@PathVariable String email){
         return ResponseEntity.ok(userService.checkEmail(email));
     }
 
 
+    @Transactional
     @GetMapping("/{nickname}/existsNickname")
     public ResponseEntity<Boolean> checkNickname(@PathVariable String nickname){
         return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
+    @Transactional
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
         UserLoginResponse loginUser = userService.login(user);
@@ -63,33 +63,29 @@ public class UserController {
         response.put("image", loginUser.getImage());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(loginUser.getToken());
+        headers.setBearerAuth(loginUser.getAccessToken());
+        headers.add("Refresh-Token", loginUser.getRefreshToken());
 
         return ResponseEntity.status(200).headers(headers).body(response);
     }
 
-
-    // 회원 정보 조회
-    @GetMapping("/info")
-    public ResponseEntity<UserDTO> getUserInfo(@RequestParam String email) {
-        // email 값을 사용하여 정보를 조회 로직을 수행
-        try {
-            UserDTO userinfo = userService.getUserInfoByEmail(email);
-            return ResponseEntity.ok(userinfo);
-        } catch (UserRuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @Transactional
+    @PostMapping("/logout")
+    public ResponseEntity<?> userLogout() {
+        Long userId = TokenContext.getProfileId();
+        userService.logout(userId);
+        return ResponseEntity.ok("로그아웃 성공");
     }
 
-    @PutMapping("/edit")
-    public ResponseEntity<UserDTO> editUserInfo(@RequestBody UserEditRequest userEditRequest) {
-        try {
-            // 사용자 정보 수정 로직을 수행하고 수정된 정보를 반환
-            UserDTO updatedUser = userService.editInfo(userEditRequest);
-            return ResponseEntity.ok(updatedUser);
-        } catch (UserRuntimeException e) {
-            // 사용자를 찾지 못한 경우 404 Not Found 응답을 반환
-            return ResponseEntity.notFound().build();
-        }
+    @Transactional
+    @DeleteMapping("/userDelete")
+    public ResponseEntity<?> userDelete(){
+        Long userIdx = TokenContext.getProfileId();
+        userService.deleteUser(userIdx);
+        return ResponseEntity.ok("회원 탈퇴 성공");
     }
+
+
+
+
 }

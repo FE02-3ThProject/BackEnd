@@ -1,13 +1,14 @@
-package com.github.gather.dto.request;
-
+package com.github.gather.dto.response;
 
 import com.github.gather.entity.Location;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Getter
 @Setter
-public class UserEditRequest {
+public class UserEditResponse {
 
     private Long userId;
     private String nickname;
@@ -17,4 +18,7 @@ public class UserEditRequest {
     private String image;
     private Location location;
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
