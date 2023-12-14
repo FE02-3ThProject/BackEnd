@@ -3,8 +3,6 @@ package com.github.gather.service.group;
 import com.github.gather.dto.request.group.CreateGroupRequest;
 import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
 import com.github.gather.dto.response.group.*;
-import com.github.gather.entity.Category;
-import com.github.gather.entity.GroupTable;
 
 import java.util.List;
 

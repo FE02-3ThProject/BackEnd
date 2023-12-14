@@ -1,6 +1,5 @@
 package com.github.gather.dto.response.group;
 
-import com.github.gather.entity.GroupTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

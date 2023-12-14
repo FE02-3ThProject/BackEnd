@@ -5,7 +5,6 @@ import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
 import com.github.gather.dto.response.group.GroupListByCategoryResponse;
 import com.github.gather.dto.response.group.GroupListByLocationResponse;
 import com.github.gather.dto.response.group.GroupListByTitleResponse;
-import com.github.gather.entity.GroupTable;
 import com.github.gather.exception.UserRuntimeException;
 import com.github.gather.repositroy.group.GroupRepository;
 import com.github.gather.security.JwtTokenProvider;
@@ -23,7 +22,6 @@ import java.util.List;
 public class GroupController {
     private final GroupServiceImpl groupService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final GroupRepository groupRepository;
 
     //모임생성
     @PostMapping(value = "/create")
