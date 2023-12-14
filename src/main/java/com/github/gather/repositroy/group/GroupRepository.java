@@ -19,5 +19,8 @@ public interface GroupRepository extends JpaRepository<GroupTable,Long> {
     @Query("SELECT g FROM GroupTable g WHERE g.title LIKE CONCAT('%', :title, '%')")
     List<GroupTable> findByTitleContaining(String title);
 
+    @Query("SELECT g FROM GroupTable g")
+    List<GroupTable> searchAllGroups();
+
 
 }

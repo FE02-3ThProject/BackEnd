@@ -71,7 +71,7 @@ public class GroupServiceImpl implements GroupService {
                 .build();
     }
 
-    // 2. 모임수정
+    // 2. 모임수정 -- 방장 고유권한
     @Override
     public UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfo) {
 
@@ -121,6 +121,7 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+    // 3. 모임 삭제 --방장 고유 권한
     @Override
     public String deleteGroup(String userEmail, Long groupId) {
         //모임 조회
@@ -141,6 +142,30 @@ public class GroupServiceImpl implements GroupService {
             throw new MemberNotAllowedException();
         }
     }
+
+    // 4. 모임 전체 조회
+    @Override
+    public List<GroupListResponse> searchAllGroups() {
+        List<GroupListResponse> groupList = new ArrayList<>();
+
+        List<GroupTable> allGroups = groupRepository.searchAllGroups();
+            for (GroupTable groupTable : allGroups) {
+                GroupListResponse group = GroupListResponse.builder()
+                        .groupId(groupTable.getGroupId())
+                        .locationName(groupTable.getLocationId().getName())
+                        .categoryName(groupTable.getCategoryId().getName())
+                        .title(groupTable.getTitle())
+                        .description(groupTable.getDescription())
+                        .image(groupTable.getImage())
+                        .maxMembers(groupTable.getMaxMembers())
+                        .createdAt(groupTable.getCreatedAt())
+                        .build();
+                groupList.add(group);
+            }
+            return  groupList;
+
+    }
+
 
     @Override
     public List<GroupListByCategoryResponse> searchGroupsByCategoryId(Long categoryId) {
@@ -219,6 +244,8 @@ public class GroupServiceImpl implements GroupService {
         }
 
     }
+
+
 
 
     //유저 email로 해당 유저 찾기

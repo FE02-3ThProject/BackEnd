@@ -5,6 +5,8 @@ import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
 import com.github.gather.dto.response.group.GroupListByCategoryResponse;
 import com.github.gather.dto.response.group.GroupListByLocationResponse;
 import com.github.gather.dto.response.group.GroupListByTitleResponse;
+import com.github.gather.dto.response.group.GroupListResponse;
+import com.github.gather.entity.GroupTable;
 import com.github.gather.exception.UserRuntimeException;
 import com.github.gather.repositroy.group.GroupRepository;
 import com.github.gather.security.JwtTokenProvider;
@@ -22,6 +24,7 @@ import java.util.List;
 public class GroupController {
     private final GroupServiceImpl groupService;
     private final JwtTokenProvider jwtTokenProvider;
+    //private final GroupRepository groupRepository;
 
     //모임생성
     @PostMapping(value = "/create")
@@ -59,6 +62,21 @@ public class GroupController {
 
         return ResponseEntity.status(200).body(result);
     }
+
+    //모임 전체 조회
+    @GetMapping(value = "/all")
+    public ResponseEntity<?> searchAllGroups(HttpServletRequest request) {
+
+        String userToken = jwtTokenProvider.resolveToken(request);
+
+        if(userToken != null) {
+            List<GroupListResponse> allGroups = groupService.searchAllGroups();
+            return ResponseEntity.status(200).body(allGroups);
+        }else {
+            throw new UserRuntimeException("모임 카페고리를 조회하려면 로그인이 필요합니다.");
+        }
+    }
+
 
     //카테고리별 모임 조회 --로그인필수
     @GetMapping(value = "/category/{categoryId}")

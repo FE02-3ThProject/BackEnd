@@ -18,4 +18,6 @@ public interface GroupService {
     List<GroupListByLocationResponse> searchGroupsByLocationId(Long locationId);
 
     List<GroupListByTitleResponse> findByTitleContaining(String title);
+
+    List<GroupListResponse> searchAllGroups();
 }
