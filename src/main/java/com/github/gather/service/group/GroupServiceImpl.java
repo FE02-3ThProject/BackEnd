@@ -2,8 +2,7 @@ package com.github.gather.service.group;
 
 import com.github.gather.dto.request.group.CreateGroupRequest;
 import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
-import com.github.gather.dto.response.group.CreatedGroupResponse;
-import com.github.gather.dto.response.group.UpdatedGroupInfoResponse;
+import com.github.gather.dto.response.group.*;
 import com.github.gather.entity.*;
 import com.github.gather.entity.Role.GroupMemberRole;
 import com.github.gather.exception.group.*;
@@ -15,7 +14,11 @@ import com.github.gather.repositroy.group.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -35,6 +38,7 @@ public class GroupServiceImpl implements GroupService {
     Category category;
 
 
+
     // 1. 모임생성
     @Override
     public CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest) {
@@ -48,7 +52,7 @@ public class GroupServiceImpl implements GroupService {
         User foundUser = getUserByEmail(userEmail);
 
         //Category categoryId, Location locationId, String title, String image, String description, Integer maxMembers, LocalDate createdAt, Boolean isDeleted
-        GroupTable newGroup = new GroupTable(foundCategory, foundLocation, newGroupRequest.getTitle(), newGroupRequest.getImage(), newGroupRequest.getDescription(), newGroupRequest.getMaxMembers(), newGroupRequest.getCreatedAt(), false);
+        GroupTable newGroup = new GroupTable(foundCategory, foundLocation, newGroupRequest.getTitle(), newGroupRequest.getImage(), newGroupRequest.getDescription(), newGroupRequest.getMaxMembers(), LocalDate.now(), false);
 
         //요청된 new 모임(Entity)을 DB에 저장.
         groupRepository.save(newGroup);
@@ -117,7 +121,104 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+    @Override
+    public String deleteGroup(String userEmail, Long groupId) {
+        //모임 조회
+        GroupTable foundGroup = getGroup(groupId);
 
+        //찾아온 모임에 대한 Leader 모임멤버 조회
+        GroupMember foundGroupMember = groupMemberRepository.findGroupMemberByRoleLeader(foundGroup.getGroupId());
+
+        if (foundGroupMember.getUserId().getEmail().equals(userEmail)) {
+            //모임 id가 들어가있는 모임멤버 모두 삭제
+            groupMemberRepository.deleteGroupMembersByGroupId(foundGroup.getGroupId());
+
+            //모임 삭제
+            groupRepository.deleteById(foundGroup.getGroupId());
+
+            return "해당 모임과 모임멤버 모두 삭제되었습니다.";
+        } else {
+            throw new MemberNotAllowedException();
+        }
+    }
+
+    @Override
+    public List<GroupListByCategoryResponse> searchGroupsByCategoryId(Long categoryId) {
+        List<GroupListByCategoryResponse> groupList = new ArrayList<>();
+
+        List<GroupTable> groupListByCategoryId = groupRepository.findByCategoryId(categoryId);
+        if (groupListByCategoryId != null) {
+            for (GroupTable groupTable : groupListByCategoryId) {
+                GroupListByCategoryResponse group = GroupListByCategoryResponse.builder()
+                        .groupId(groupTable.getGroupId())
+                        .locationName(groupTable.getLocationId().getName())
+                        .categoryName(groupTable.getCategoryId().getName())
+                        .title(groupTable.getTitle())
+                        .description(groupTable.getDescription())
+                        .image(groupTable.getImage())
+                        .maxMembers(groupTable.getMaxMembers())
+                        .createdAt(groupTable.getCreatedAt())
+                        .build();
+                groupList.add(group);
+            }
+            return  groupList;
+        } else {
+            throw new GroupNotFoundException();
+        }
+    }
+
+    @Override
+    public List<GroupListByLocationResponse> searchGroupsByLocationId(Long locationId) {
+        List<GroupListByLocationResponse> groupList = new ArrayList<>();
+
+
+        List<GroupTable> groupListByLocationId = groupRepository.findByLocationId(locationId);
+        if (groupListByLocationId != null) {
+            for (GroupTable groupTable : groupListByLocationId) {
+                GroupListByLocationResponse group = GroupListByLocationResponse.builder()
+                        .groupId(groupTable.getGroupId())
+                        .locationName(groupTable.getLocationId().getName())
+                        .categoryName(groupTable.getCategoryId().getName())
+                        .title(groupTable.getTitle())
+                        .description(groupTable.getDescription())
+                        .image(groupTable.getImage())
+                        .maxMembers(groupTable.getMaxMembers())
+                        .createdAt(groupTable.getCreatedAt())
+                        .build();
+                groupList.add(group);
+            }
+            return  groupList;
+        } else{
+            throw new GroupNotFoundException();
+        }
+    }
+
+    @Override
+    public List<GroupListByTitleResponse> findByTitleContaining(String title) {
+        List<GroupListByTitleResponse> groupList = new ArrayList<>();
+
+
+        List<GroupTable> groupListByTitle = groupRepository.findByTitleContaining(title);
+        if (groupListByTitle != null) {
+            for (GroupTable groupTable : groupListByTitle) {
+                GroupListByTitleResponse group = GroupListByTitleResponse.builder()
+                        .groupId(groupTable.getGroupId())
+                        .locationName(groupTable.getLocationId().getName())
+                        .categoryName(groupTable.getCategoryId().getName())
+                        .title(groupTable.getTitle())
+                        .description(groupTable.getDescription())
+                        .image(groupTable.getImage())
+                        .maxMembers(groupTable.getMaxMembers())
+                        .createdAt(groupTable.getCreatedAt())
+                        .build();
+                groupList.add(group);
+            }
+            return  groupList;
+        } else {
+            throw new GroupNotFoundException();
+        }
+
+    }
 
 
     //유저 email로 해당 유저 찾기
