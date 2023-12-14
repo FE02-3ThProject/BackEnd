@@ -16,7 +16,28 @@ spring:
 
   secret-key: ${SECRET-KEY}
 
+#security:
+#  jwt:
+#    header:
+#    secret:
+#    token-validity-in-seconds:
+#
+#aws:
+#  accessKeyId:
+#  secretKey:
+#  region:
+#  s3:
+#    bucketName:
 
 logging:
   level:
     org.springframework.security: DEBUG
+server:
+  port: 9090
+management:
+  server:
+    port: 8080
+
+
+
+

@@ -28,6 +28,10 @@ public class User implements UserDetails {
     @JoinColumn(name = "location_id")
     private Location locationId;
 
+    @ManyToOne
+    @JoinColumn(name = "favorite_category")
+    private Category categoryId;
+
     @Column(name = "email")
     private String email;
 
@@ -50,6 +54,7 @@ public class User implements UserDetails {
     private Integer lockCount;
 
     @Column(name = "is_deleted")
+    @Builder.Default
     private Boolean isDeleted = false;
 
     @Column(name = "user_role")
