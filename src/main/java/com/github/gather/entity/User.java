@@ -50,6 +50,7 @@ public class User implements UserDetails {
     private Integer lockCount;
 
     @Column(name = "is_deleted")
+    @Builder.Default
     private Boolean isDeleted = false;
 
     @Column(name = "user_role")
