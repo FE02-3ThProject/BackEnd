@@ -62,6 +62,12 @@ public class GroupServiceImpl implements GroupService {
                 .build();
     }
 
+    @Override
+    public GroupTable getGroupById(Long id) {
+        return groupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 그룹이 없습니다."));
+    }
+
     // 2. 모임수정 -- 방장 고유권한
     @Override
     public UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfo) {
