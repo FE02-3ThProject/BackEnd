@@ -30,5 +30,15 @@ public class GroupAuthorityController {
 
         return ResponseEntity.ok().build();
     }
+
+    // 멤버 추방
+    @PostMapping("/{groupId}/kick/{userId}")
+    public ResponseEntity<?> kickMember(@PathVariable Long groupId, @PathVariable Long userId, HttpServletRequest request) {
+        User currentUser = authService.checkToken(request);
+        groupService.kickMember(groupId, userId, currentUser);
+
+        return ResponseEntity.ok().build();
+    }
+
 }
 

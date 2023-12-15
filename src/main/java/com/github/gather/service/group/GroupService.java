@@ -26,4 +26,6 @@ public interface GroupService {
     GroupTable getGroupById(Long id);
 
     void transferLeader(Long groupId, Long newLeaderId, User currentUser);
+
+    void kickMember(Long groupId, Long userId, User currentUser);
 }

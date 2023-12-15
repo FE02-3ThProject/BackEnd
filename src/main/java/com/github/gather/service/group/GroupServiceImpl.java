@@ -263,6 +263,8 @@ public class GroupServiceImpl implements GroupService {
             throw new LocationNotFoundException();
         }
     }
+
+    // 방장 권한 이전
     @Transactional
     public void transferLeader(Long groupId, Long newLeaderId, User currentUser) {
         GroupTable group = getGroupById(groupId);
@@ -287,6 +289,31 @@ public class GroupServiceImpl implements GroupService {
 
         newAdminMember.setRole(GroupMemberRole.LEADER);
         groupMemberRepository.save(newAdminMember);
+    }
+
+    // 멤버 추방
+    @Override
+    @Transactional
+    public void kickMember(Long groupId, Long userId, User currentUser) {
+        GroupTable group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new ErrorException("해당 ID의 그룹이 존재하지 않습니다."));
+
+        // 방장 여부 확인
+        GroupMember currentLeader = groupMemberRepository.findByUserIdAndGroupId(currentUser, group)
+                .orElseThrow(() -> new ErrorException("현재 사용자는 이 그룹의 방장이 아닙니다."));
+
+        if (!currentLeader.getRole().equals(GroupMemberRole.LEADER)) {
+            throw new ErrorException("권한이 없습니다.");
+        }
+
+        // 추방하려는 멤버 여부 확인
+        User memberToKick = userRepository.findById(userId)
+                .orElseThrow(() -> new ErrorException("해당 ID의 사용자가 존재하지 않습니다."));
+        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(memberToKick, group)
+                .orElseThrow(() -> new ErrorException("추방하려는 사용자가 그룹의 멤버가 아닙니다."));
+
+        // 그룹에서 제거
+        groupMemberRepository.delete(member);
     }
 }
 
