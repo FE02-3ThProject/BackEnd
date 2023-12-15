@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GroupMemberRepository extends JpaRepository<GroupMember,Long> {
@@ -27,4 +28,6 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember,Long> {
 
     int countByGroupId(GroupTable group);
     boolean existsByGroupIdAndUserId(GroupTable group, User user);
+
+    Optional<GroupMember> findByUserIdAndGroupId(User user, GroupTable groupTable);
 }

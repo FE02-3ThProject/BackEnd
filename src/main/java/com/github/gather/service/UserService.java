@@ -164,4 +164,13 @@ public class UserService {
     private boolean isRefreshTokenBlacklisted(String refreshToken) {
         return tokenBlacklistRepository.existsById(refreshToken);
     }
+
+    public User getUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()){
+            return user.get();
+        } else {
+            return null;
+        }
+    }
 }

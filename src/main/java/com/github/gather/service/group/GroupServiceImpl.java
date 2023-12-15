@@ -5,6 +5,7 @@ import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
 import com.github.gather.dto.response.group.*;
 import com.github.gather.entity.*;
 import com.github.gather.entity.Role.GroupMemberRole;
+import com.github.gather.exception.ErrorException;
 import com.github.gather.exception.group.*;
 import com.github.gather.repositroy.CategoryRepository;
 import com.github.gather.repositroy.ChatRoomRepository;
@@ -261,6 +262,31 @@ public class GroupServiceImpl implements GroupService {
         } else {
             throw new LocationNotFoundException();
         }
+    }
+    @Transactional
+    public void transferLeader(Long groupId, Long newLeaderId, User currentUser) {
+        GroupTable group = getGroupById(groupId);
+
+        // 방장 여부 확인
+        GroupMember currentLeader = groupMemberRepository.findByUserIdAndGroupId(currentUser, group)
+                .orElseThrow(() -> new ErrorException("현재 사용자는 이 그룹의 방장이 아닙니다."));
+
+        if (!currentLeader.getRole().equals(GroupMemberRole.LEADER)) {
+            throw new ErrorException("권한이 없습니다.");
+        }
+
+        // 새로운 방장이 그룹의 멤버인지 확인
+        User newLeader = userRepository.findById(newLeaderId)
+                .orElseThrow(() -> new ErrorException("해당 ID의 사용자가 존재하지 않습니다."));
+        GroupMember newAdminMember = groupMemberRepository.findByUserIdAndGroupId(newLeader, group)
+                .orElseThrow(() -> new ErrorException("새로운 방장이 그룹의 멤버가 아닙니다."));
+
+        // 방장 권한 변경
+        currentLeader.setRole(GroupMemberRole.MEMBER);
+        groupMemberRepository.save(currentLeader);
+
+        newAdminMember.setRole(GroupMemberRole.LEADER);
+        groupMemberRepository.save(newAdminMember);
     }
 }
 
