@@ -16,12 +16,10 @@ public class GroupAuthorityController {
 
     private final AuthService authService;
     private final GroupService groupService;
-    private final UserService userService;
 
-    public GroupAuthorityController(AuthService authService, GroupService groupService, UserService userService) {
+    public GroupAuthorityController(AuthService authService, GroupService groupService) {
         this.authService = authService;
         this.groupService = groupService;
-        this.userService = userService;
     }
 
     // 방장 권한 이전
