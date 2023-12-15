@@ -22,6 +22,8 @@ public class ChatRoom {
     @JoinColumn(name = "group_id")
     private GroupTable groupId;
 
-
+    public ChatRoom(GroupTable groupId) {
+        this.groupId = groupId;
+    }
 }
 

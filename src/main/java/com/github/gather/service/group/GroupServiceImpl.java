@@ -6,6 +6,7 @@ import com.github.gather.dto.response.group.*;
 import com.github.gather.entity.*;
 import com.github.gather.entity.Role.GroupMemberRole;
 import com.github.gather.exception.group.*;
+import com.github.gather.repositroy.ChatRoomRepository;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.repositroy.group.CategoryRepository;
 import com.github.gather.repositroy.group.GroupMemberRepository;
@@ -31,6 +32,7 @@ public class GroupServiceImpl implements GroupService {
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     User user;
     GroupTable group;
@@ -47,6 +49,11 @@ public class GroupServiceImpl implements GroupService {
         groupRepository.save(newGroup);
         GroupMember newGroupMember = new GroupMember(foundUser, newGroup, GroupMemberRole.LEADER);
         groupMemberRepository.save(newGroupMember);
+
+        // 채팅방 생성
+        ChatRoom newChatRoom = new ChatRoom(newGroup);
+        chatRoomRepository.save(newChatRoom);
+
 
         return CreatedGroupResponse.builder()
                 .group(newGroup)

@@ -32,11 +32,4 @@ public class Message {
 
     @Column(name = "send_time")
     private Timestamp sendTime;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-
-    // 생성자, 게터, 세터 등 필요한 메서드 추가
 }
