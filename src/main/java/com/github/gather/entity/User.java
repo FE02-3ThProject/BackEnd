@@ -4,10 +4,11 @@ import com.github.gather.entity.Role.UserRole;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -60,6 +61,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+
+
+//    @OneToMany(mappedBy = "user")
+//    private List<UserGroup> userGroups;    // UserGroup과 양방향 관계를 맺기 위해 생성
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -91,5 +97,18 @@ public class User implements UserDetails {
     }
 
 
+    // 그룹에 참여한 그룹 목록
+    @ManyToMany
+    @JoinTable(
+            name = "user_group_member",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
+    private Set<UserGroupTable> joinGroups = new HashSet<>();
+
+
+    // 북마크한 그룹 목록
+    @ManyToMany(mappedBy = "bookmarkedBy")
+    private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
 }
 
