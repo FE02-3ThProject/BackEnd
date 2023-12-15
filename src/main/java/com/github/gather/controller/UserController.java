@@ -57,10 +57,11 @@ public class UserController {
         Map<String, String> response = new HashMap<>();
         response.put("email", loginUser.getEmail());
         response.put("nickname", loginUser.getNickname());
-        response.put("phoneNumber", loginUser.getPhoneNumber());
         response.put("userRole", loginUser.getUserRole().name());
         response.put("location", loginUser.getLocation().getName());
         response.put("image", loginUser.getImage());
+        //TODO : 카테고리 자기소개
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(loginUser.getAccessToken());
