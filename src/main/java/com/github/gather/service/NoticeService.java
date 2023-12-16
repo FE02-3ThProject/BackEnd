@@ -46,14 +46,17 @@ public class NoticeService {
                 .createAt(LocalDate.now())
                 .groupId(groupId)
                 .userId(user)
+                .email(user.getEmail())
                 .build();
         noticeRepository.save(notice);
+        System.out.println("noticeDto.getEmail() = " + noticeDto.getEmail()); // 이메일 로그 출력
         return NoticeDto.builder()
                 .noticeIdx(notice.getNoticeIdx())
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .userId(user.getUserId())
                 .createAt(notice.getCreateAt())
+                .email(notice.getEmail())
                 .build();
     }
 
@@ -68,6 +71,7 @@ public class NoticeService {
                         .content(notice.getContent())
                         .userId(notice.getUserId().getUserId())
                         .createAt(notice.getCreateAt())
+                        .email(notice.getUserId().getEmail())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -82,6 +86,7 @@ public class NoticeService {
                 .content(notice.getContent())
                 .userId(notice.getUserId().getUserId())
                 .createAt(notice.getCreateAt())
+                .email(notice.getEmail())
                 .build();
     }
 
@@ -106,6 +111,7 @@ public class NoticeService {
                 .createAt(notice.getCreateAt())
                 .groupId(notice.getGroupId())
                 .userId(user)
+                .email(user.getEmail())
                 .build());
 
         return NoticeDto.builder()
@@ -114,9 +120,9 @@ public class NoticeService {
                 .content(updatedNotice.getContent())
                 .userId(updatedNotice.getUserId().getUserId())
                 .createAt(updatedNotice.getCreateAt())
+                .email(updatedNotice.getEmail())
                 .build();
     }
-
 
     // 공지 삭제
     public void deleteNotice(Long noticeIdx, HttpServletRequest request) {

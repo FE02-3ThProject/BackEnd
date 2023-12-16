@@ -1,9 +1,7 @@
 package com.github.gather.controller;
 
-import com.github.gather.entity.GroupTable;
 import com.github.gather.entity.User;
 import com.github.gather.service.AuthService;
-import com.github.gather.service.UserService;
 import com.github.gather.service.group.GroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

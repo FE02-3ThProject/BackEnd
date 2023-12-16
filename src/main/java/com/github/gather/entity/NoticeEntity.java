@@ -38,4 +38,6 @@ public class NoticeEntity {
     @JoinColumn(name = "user_id")
     private User userId;
 
+    @Column(name = "email")
+    private String email;
 }

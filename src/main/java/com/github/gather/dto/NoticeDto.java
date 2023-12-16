@@ -18,4 +18,5 @@ public class NoticeDto {
     private String content;
     private Long userId;
     private LocalDate createAt;
+    private String email;
 }
