@@ -16,4 +16,5 @@ public class ExceptionMessage {
     public static final String NO_AUTH_TO_MODIFY_NOTICE = "공지를 수정할 권한이 없습니다.";
     public static final String NO_AUTH_TO_DELETE_NOTICE = "공지를 삭제할 권한이 없습니다.";
 
+    public static final String USER_NOT_PART_OF_GROUP = "해당 사용자는 그룹의 멤버가 아닙니다.";
 }

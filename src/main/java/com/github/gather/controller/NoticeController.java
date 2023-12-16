@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @RestController
@@ -33,6 +34,18 @@ public class NoticeController {
         GroupTable group = groupTableService.getGroupById(groupId);
         NoticeDto newNoticeDto = noticeService.createNotice(group, noticeDto, request);
         return ResponseEntity.ok(newNoticeDto);
+    }
+
+    // 공지 조회(전체)
+    @GetMapping("/{groupId}/notice")
+    public List<NoticeDto> getAllNotices(@PathVariable Long groupId) {
+        return noticeService.getAllNoticesByGroup(groupId);
+    }
+
+    // 공지 조회(특정)
+    @GetMapping("/{groupId}/notice/{noticeIdx}")
+    public NoticeDto getNotice(@PathVariable Long groupId, @PathVariable Long noticeIdx) {
+        return noticeService.getNotice(noticeIdx);
     }
 
     // 공지 수정
