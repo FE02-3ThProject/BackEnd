@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    url: ${DB_URL}
+    username: backend2team
+    password: supercoding09
+    url: jdbc:mariadb://db-project3.cryqvukdhzno.ap-northeast-2.rds.amazonaws.com:3306/communityRoom
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,8 +14,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-  secret-key: ${SECRET-KEY}
-
+  secret-key: supercoding
 #security:
 #  jwt:
 #    header:
@@ -37,7 +36,6 @@ server:
 management:
   server:
     port: 8080
-
 
 
 
