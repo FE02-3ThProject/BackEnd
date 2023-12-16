@@ -20,13 +20,13 @@ public class GroupJoinService {
     }
 
     public void joinGroup(Long groupId, User user) {
-        GroupTable group = groupService.getGroupById(groupId); // GroupServiceImpl의 메소드를 사용
+        GroupTable group = groupService.getGroupById(groupId);
 
         if (groupMemberRepository.existsByGroupIdAndUserId(group, user)) {
             throw new IllegalArgumentException("이미 그룹의 멤버입니다.");
         }
 
-        int currentMembers = groupMemberRepository.countByGroupId(group);
+        Long currentMembers = groupMemberRepository.countByGroupId(group);
 
         if (currentMembers >= group.getMaxMembers()) {
             throw new IllegalArgumentException("그룹의 최대 멤버 수를 초과했습니다.");
