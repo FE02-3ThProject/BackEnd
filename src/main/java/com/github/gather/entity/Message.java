@@ -23,13 +23,20 @@ public class Message {
     @JoinColumn(name = "room_id")
     private ChatRoom roomId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(name = "content")
     private String content;
 
     @Column(name = "send_time")
     private Timestamp sendTime;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User userId;
+
+    public Message(ChatRoom roomId, String content, Timestamp sendTime, User userId) {
+        this.roomId = roomId;
+        this.content = content;
+        this.sendTime = sendTime;
+        this.userId = userId;
+    }
 }
