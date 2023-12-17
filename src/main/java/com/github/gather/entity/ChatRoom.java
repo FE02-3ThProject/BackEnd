@@ -1,10 +1,10 @@
 package com.github.gather.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+        import lombok.AllArgsConstructor;
+        import lombok.Getter;
+        import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+        import javax.persistence.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +22,8 @@ public class ChatRoom {
     @JoinColumn(name = "group_id")
     private GroupTable groupId;
 
-
+    public ChatRoom(GroupTable groupId) {
+        this.groupId = groupId;
+    }
 }
 

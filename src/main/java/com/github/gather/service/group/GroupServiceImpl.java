@@ -5,12 +5,14 @@ import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
 import com.github.gather.dto.response.group.*;
 import com.github.gather.entity.*;
 import com.github.gather.entity.Role.GroupMemberRole;
+import com.github.gather.exception.ErrorException;
 import com.github.gather.exception.group.*;
+import com.github.gather.repositroy.CategoryRepository;
+import com.github.gather.repositroy.ChatRoomRepository;
+import com.github.gather.repositroy.LocationRepository;
 import com.github.gather.repositroy.UserRepository;
-import com.github.gather.repositroy.group.CategoryRepository;
 import com.github.gather.repositroy.group.GroupMemberRepository;
 import com.github.gather.repositroy.group.GroupRepository;
-import com.github.gather.repositroy.group.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,39 +33,28 @@ public class GroupServiceImpl implements GroupService {
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     User user;
     GroupTable group;
     Location location;
     Category category;
 
-
-
-
     // 1. 모임생성
     @Override
     public CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest) {
-        //categoryId에 해당하는 Category Entity 찾아오기 (getById는 JPA에서 더 이상 권장하지 않음.)
         Category foundCategory = getCategory(newGroupRequest.getCategoryId());
-
-        //locationId에 해당하는 Location Entity 찾아오기
         Location foundLocation = getLocation(newGroupRequest.getLocationId());
-
-        //userEmail -> User(Entity) 찾아오기 //pwd는 필요없으니까 진호님께 물어보기.
         User foundUser = getUserByEmail(userEmail);
-
-        //Category categoryId, Location locationId, String title, String image, String description, Integer maxMembers, LocalDate createdAt, Boolean isDeleted
         GroupTable newGroup = new GroupTable(foundCategory, foundLocation, newGroupRequest.getTitle(), newGroupRequest.getImage(), newGroupRequest.getDescription(), newGroupRequest.getMaxMembers(), LocalDate.now(), false);
-
-        //요청된 new 모임(Entity)을 DB에 저장.
         groupRepository.save(newGroup);
-
-        //새로운 모임 멤버 객체를 생성 (생성된 모임을 할당, 유저를 방장으로).
-        //User userId, GroupTable groupId, String role
         GroupMember newGroupMember = new GroupMember(foundUser, newGroup, GroupMemberRole.LEADER);
-
-        //새로운 모임 멤버를 DB에 저장.
         groupMemberRepository.save(newGroupMember);
+
+        // 채팅방 생성
+        ChatRoom newChatRoom = new ChatRoom(newGroup);
+        chatRoomRepository.save(newChatRoom);
+
 
         return CreatedGroupResponse.builder()
                 .group(newGroup)
@@ -72,26 +63,21 @@ public class GroupServiceImpl implements GroupService {
                 .build();
     }
 
+    @Override
+    public GroupTable getGroupById(Long id) {
+        return groupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 그룹이 없습니다."));
+    }
+
     // 2. 모임수정 -- 방장 고유권한
     @Override
     public UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfo) {
 
-        //모임 조회
         GroupTable foundGroup = getGroup(groupId);
-
-        //수정할 category 조회
         Category updatedCategory = getCategory(updateGroupInfo.getCategoryId());
-
-        //수정할 location 조회
         Location updatedLocation = getLocation(updateGroupInfo.getLocationId());
-
-        //찾아온 모임에 대한 Leader 모임멤버 조회
         GroupMember foundGroupMember = groupMemberRepository.findGroupMemberByRoleLeader(foundGroup.getGroupId());
-
-
-        //찾아온 Leader 모임멤버의 email과 로그인한 유저의 email이 일치하면 모임 수정 가능
         if (foundGroupMember.getUserId().getEmail().equals(userEmail)) {
-
             foundGroup.updateGroupInfo(
                     updatedCategory,
                     updatedLocation,
@@ -101,7 +87,6 @@ public class GroupServiceImpl implements GroupService {
                     updateGroupInfo.getMaxMembers(),
                     foundGroup.getCreatedAt()
             );
-
 
             //수정한 모임 저장
             GroupTable updatedGroup = groupRepository.save(foundGroup);
@@ -116,7 +101,6 @@ public class GroupServiceImpl implements GroupService {
                     .maxMembers(updatedGroup.getMaxMembers())
                     .createdAt(updatedGroup.getCreatedAt())
                     .build();
-
         } else {
             throw new MemberNotAllowedException();
         }
@@ -125,17 +109,11 @@ public class GroupServiceImpl implements GroupService {
     // 3. 모임 삭제 --방장 고유 권한
     @Override
     public String deleteGroup(String userEmail, Long groupId) {
-        //모임 조회
         GroupTable foundGroup = getGroup(groupId);
-
-        //찾아온 모임에 대한 Leader 모임멤버 조회
         GroupMember foundGroupMember = groupMemberRepository.findGroupMemberByRoleLeader(foundGroup.getGroupId());
 
         if (foundGroupMember.getUserId().getEmail().equals(userEmail)) {
-            //모임 id가 들어가있는 모임멤버 모두 삭제
             groupMemberRepository.deleteGroupMembersByGroupId(foundGroup.getGroupId());
-
-            //모임 삭제
             groupRepository.deleteById(foundGroup.getGroupId());
 
             return "해당 모임과 모임멤버 모두 삭제되었습니다.";
@@ -144,24 +122,13 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
-    // 4. 모임 전체 조회 Test
+    // 4. 모임 전체 조회
     @Override
     public List<GroupListResponse> searchAllGroups() {
         List<GroupListResponse> groupList = new ArrayList<>();
-        /*GroupMember groupLeader;*/
 
         List<GroupTable> allGroups = groupRepository.searchAllGroups();
-        for (GroupTable groupTable : allGroups) {
-/*
-            List<GroupMember> groupMembers = groupMemberRepository.findGroupMemebersByGroupId(groupTable.getGroupId());
-
-            for (GroupMember groupMember : groupMembers) {
-                if (groupMember.getRole().equals(GroupMemberRole.LEADER)) {
-                    groupLeader = groupMember;
-                }
-            }
-
-            if (groupLeader != null) {*/
+            for (GroupTable groupTable : allGroups) {
                 GroupListResponse group = GroupListResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -171,15 +138,11 @@ public class GroupServiceImpl implements GroupService {
                         .image(groupTable.getImage())
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
-                        //.leaderEmail(groupLeader.getUserId().getEmail())
                         .build();
                 groupList.add(group);
-            /*}*/
-        }
+            }
             return  groupList;
-
     }
-
 
     @Override
     public List<GroupListByCategoryResponse> searchGroupsByCategoryId(Long categoryId) {
@@ -235,8 +198,6 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<GroupListByTitleResponse> findByTitleContaining(String title) {
         List<GroupListByTitleResponse> groupList = new ArrayList<>();
-
-
         List<GroupTable> groupListByTitle = groupRepository.findByTitleContaining(title);
         if (groupListByTitle != null) {
             for (GroupTable groupTable : groupListByTitle) {
@@ -258,9 +219,6 @@ public class GroupServiceImpl implements GroupService {
         }
 
     }
-
-
-
 
     //유저 email로 해당 유저 찾기
     public User getUserByEmail(String userEmail) {
@@ -304,10 +262,59 @@ public class GroupServiceImpl implements GroupService {
         } else {
             throw new LocationNotFoundException();
         }
-
     }
 
+    // 방장 권한 이전
+    @Transactional
+    public void transferLeader(Long groupId, Long newLeaderId, User currentUser) {
+        GroupTable group = getGroupById(groupId);
 
+        // 방장 여부 확인
+        GroupMember currentLeader = groupMemberRepository.findByUserIdAndGroupId(currentUser, group)
+                .orElseThrow(() -> new ErrorException("현재 사용자는 이 그룹의 방장이 아닙니다."));
+
+        if (!currentLeader.getRole().equals(GroupMemberRole.LEADER)) {
+            throw new ErrorException("권한이 없습니다.");
+        }
+
+        // 새로운 방장이 그룹의 멤버인지 확인
+        User newLeader = userRepository.findById(newLeaderId)
+                .orElseThrow(() -> new ErrorException("해당 ID의 사용자가 존재하지 않습니다."));
+        GroupMember newAdminMember = groupMemberRepository.findByUserIdAndGroupId(newLeader, group)
+                .orElseThrow(() -> new ErrorException("새로운 방장이 그룹의 멤버가 아닙니다."));
+
+        // 방장 권한 변경
+        currentLeader.setRole(GroupMemberRole.MEMBER);
+        groupMemberRepository.save(currentLeader);
+
+        newAdminMember.setRole(GroupMemberRole.LEADER);
+        groupMemberRepository.save(newAdminMember);
+    }
+
+    // 멤버 추방
+    @Override
+    @Transactional
+    public void kickMember(Long groupId, Long userId, User currentUser) {
+        GroupTable group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new ErrorException("해당 ID의 그룹이 존재하지 않습니다."));
+
+        // 방장 여부 확인
+        GroupMember currentLeader = groupMemberRepository.findByUserIdAndGroupId(currentUser, group)
+                .orElseThrow(() -> new ErrorException("현재 사용자는 이 그룹의 방장이 아닙니다."));
+
+        if (!currentLeader.getRole().equals(GroupMemberRole.LEADER)) {
+            throw new ErrorException("권한이 없습니다.");
+        }
+
+        // 추방하려는 멤버 여부 확인
+        User memberToKick = userRepository.findById(userId)
+                .orElseThrow(() -> new ErrorException("해당 ID의 사용자가 존재하지 않습니다."));
+        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(memberToKick, group)
+                .orElseThrow(() -> new ErrorException("추방하려는 사용자가 그룹의 멤버가 아닙니다."));
+
+        // 그룹에서 제거
+        groupMemberRepository.delete(member);
+    }
 }
 
 

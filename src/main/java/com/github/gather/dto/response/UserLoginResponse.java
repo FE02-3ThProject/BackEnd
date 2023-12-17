@@ -16,6 +16,7 @@ public class UserLoginResponse {
     private Location location;
     private String image;
     private UserRole userRole;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 
 }

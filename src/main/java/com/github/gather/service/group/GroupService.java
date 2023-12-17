@@ -3,6 +3,8 @@ package com.github.gather.service.group;
 import com.github.gather.dto.request.group.CreateGroupRequest;
 import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
 import com.github.gather.dto.response.group.*;
+import com.github.gather.entity.GroupTable;
+import com.github.gather.entity.User;
 
 import java.util.List;
 
@@ -20,4 +22,10 @@ public interface GroupService {
     List<GroupListByTitleResponse> findByTitleContaining(String title);
 
     List<GroupListResponse> searchAllGroups();
+
+    GroupTable getGroupById(Long id);
+
+    void transferLeader(Long groupId, Long newLeaderId, User currentUser);
+
+    void kickMember(Long groupId, Long userId, User currentUser);
 }

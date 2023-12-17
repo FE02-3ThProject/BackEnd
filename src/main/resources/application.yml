@@ -3,6 +3,8 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     url: ${DB_URL}
+    tomcat:
+      validation-query: "select 1"
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,7 +24,6 @@ spring:
 #    secret:
 #    token-validity-in-seconds:
 #
-#aws:
 #  accessKeyId:
 #  secretKey:
 #  region:
@@ -32,8 +33,11 @@ spring:
 logging:
   level:
     org.springframework.security: DEBUG
-
-
+server:
+  port: 9090
+management:
+  server:
+    port: 8080
 
 
 

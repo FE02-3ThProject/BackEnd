@@ -46,4 +46,7 @@ public class GroupMember {
         this.role = role;
     }
 
+    public void setRole(GroupMemberRole role) {
+        this.role = role;
+    }
 }

@@ -23,10 +23,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null && jwtTokenProvider.validateToken(token)) { //토큰이 유효한지 검사
             Long userId = jwtTokenProvider.findUserIdBytoken(token);
-            Authentication authentication = jwtTokenProvider.getAuthentication(token); //토큰안에 있는 유저정보를 authentication객체로 저장
+            // AccessToken이 만료되었다면
+            if (!jwtTokenProvider.validateToken(token)) {
+                // 여기서 RefreshToken을 사용하여 새로운 AccessToken을 발급받는 로직 추가
+                String newAccessToken = jwtTokenProvider.refreshAccessToken(token);
 
-            SecurityContextHolder.getContext().setAuthentication(authentication); //authentication객체로 저장한 유저정보를 SecurityContext에 저장
+                // 새로운 AccessToken으로 Authentication 객체 생성
+                Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
 
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // Response 헤더에 새로운 AccessToken을 실어서 보내줄 수 있음
+                response.setHeader("New-Access-Token", newAccessToken);
+            } else {
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
             TokenContext.setProfileId(userId);
         }
 
