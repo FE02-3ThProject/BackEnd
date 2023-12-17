@@ -1,3 +1,4 @@
+
 package com.github.gather.config;
 
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedOrigin("http://localhost:9090");
 //        config.addAllowedOriginPattern("*");
+        config.addAllowedOriginPattern("*");
         config.addAllowedOriginPattern("http://localhost:*");
         config.addAllowedHeader("*");
         config.addExposedHeader("*");
