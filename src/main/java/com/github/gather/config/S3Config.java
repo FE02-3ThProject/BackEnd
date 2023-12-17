@@ -10,13 +10,13 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 public class S3Config {
 
-    @org.springframework.beans.factory.annotation.Value("accessKeyId")
+    @org.springframework.beans.factory.annotation.Value("AKIA2WSJ73WOI2ZIWIMW")
     private String accessKeyId;
 
-    @org.springframework.beans.factory.annotation.Value("secretKey")
+    @org.springframework.beans.factory.annotation.Value("EIGmAvkGbdSKIddN/cuzWovuIM2t79kbwD4AACKN")
     private String secretKey;
 
-    @org.springframework.beans.factory.annotation.Value("region")
+    @org.springframework.beans.factory.annotation.Value("ap-northeast-2")
     private String region;
 
 

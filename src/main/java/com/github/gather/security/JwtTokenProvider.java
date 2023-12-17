@@ -6,6 +6,7 @@ import com.github.gather.entity.User;
 import com.github.gather.repositroy.RefreshTokenRepository;
 import com.github.gather.repositroy.TokenBlacklistRepository;
 import com.github.gather.repositroy.UserRepository;
+import com.sun.security.auth.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -108,7 +109,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
 //        인증된 사용자의 아이디, 비밀번호, 권한을 파라미터로 받음 - customUserDetailsService.loadUserByUsername
@@ -133,6 +133,14 @@ public class JwtTokenProvider {
             return servletRequest.getServletRequest().getParameter("token");
         }
         return null;
+    }
+    public UserPrincipal getUserPrincipal(String token) {
+        String userEmail = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return new UserPrincipal(userEmail);
+    }
+
+    public String getUserPk(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
     // 토큰의 유효성 + 만료일자 확인

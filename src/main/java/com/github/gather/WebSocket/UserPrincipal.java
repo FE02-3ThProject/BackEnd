@@ -10,6 +10,10 @@ public class UserPrincipal implements Principal {
         this.email = email;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public String getName() {
         return email;
