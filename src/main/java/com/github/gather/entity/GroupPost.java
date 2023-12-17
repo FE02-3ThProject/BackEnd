@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,6 +32,18 @@ public class GroupPost {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;
+
+    @Column(name = "posted_at")
+    private LocalDateTime postedAt;
+
+    @Column(name = "email")
+    private String email;
+
+    // 게시글 수정
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
 }
 

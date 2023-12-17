@@ -54,7 +54,6 @@ public class UserService {
                 .locationId(location)
                 .categoryId(category)
                 .nickname(userData.getNickname())
-                .phoneNumber(userData.getPhoneNumber())
                 .image(userData.getImage())
                 .userRole(UserRole.USER)
                 .isDeleted(false)
@@ -114,7 +113,6 @@ public class UserService {
         return UserLoginResponse.builder()
                 .email(loginUser.getEmail())
                 .nickname(loginUser.getNickname())
-                .phoneNumber(loginUser.getPhoneNumber())
                 .location(loginUser.getLocationId())
                 .userRole(loginUser.getUserRole())
                 .image(loginUser.getImage())
@@ -163,5 +161,14 @@ public class UserService {
     // 블랙리스트에 토큰이 있는지 확인
     private boolean isRefreshTokenBlacklisted(String refreshToken) {
         return tokenBlacklistRepository.existsById(refreshToken);
+    }
+
+    public User getUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()){
+            return user.get();
+        } else {
+            return null;
+        }
     }
 }

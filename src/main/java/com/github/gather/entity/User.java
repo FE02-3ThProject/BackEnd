@@ -1,6 +1,7 @@
 package com.github.gather.entity;
 
 import com.github.gather.entity.Role.UserRole;
+import com.github.gather.oauth2.SocialType;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,9 +42,6 @@ public class User implements UserDetails {
     @Column(name = "nickname")
     private String nickname;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
     @Column(name = "image")
     private String image;
 
@@ -60,6 +58,12 @@ public class User implements UserDetails {
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType; // KAKAO, NAVER, GOOGLE
+
+    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+
 
 
 
@@ -110,5 +114,7 @@ public class User implements UserDetails {
     // 북마크한 그룹 목록
     @ManyToMany(mappedBy = "bookmarkedBy")
     private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
+
+
 }
 

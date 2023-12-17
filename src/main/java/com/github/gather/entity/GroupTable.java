@@ -1,15 +1,17 @@
 package com.github.gather.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Entity
 @Table(name = "group_table")
@@ -38,14 +40,36 @@ public class GroupTable {
     private String description;
 
     @Column(name = "max_members")
-    private Long maxMembers;
+    private Integer maxMembers;
 
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    //@Temporal(TemporalType.DATE)
+    private LocalDate createdAt;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
     // 생성자, 게터, 세터 등 필요한 메서드 추가
+
+    public GroupTable(Category categoryId, Location locationId, String title, String image, String description, Integer maxMembers, LocalDate createdAt, Boolean isDeleted) {
+        this.categoryId = categoryId;
+        this.locationId = locationId;
+        this.title = title;
+        this.image = image;
+        this.description = description;
+        this.maxMembers = maxMembers;
+        this.createdAt = createdAt;
+        this.isDeleted = isDeleted;
+    }
+
+    public void updateGroupInfo(Category categoryId, Location locationId, String title,String description,String image,Integer maxMembers, LocalDate createdAt) {
+        this.categoryId = categoryId;
+        this.locationId = locationId;
+        this.title = title;
+        this.description = description;
+        this.image = image;
+        this.maxMembers = maxMembers;
+        this.createdAt = createdAt;
+    }
 }
 

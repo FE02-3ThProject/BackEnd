@@ -3,6 +3,8 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     url: ${DB_URL}
+    tomcat:
+      validation-query: "select 1"
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,13 +18,21 @@ spring:
 
   secret-key: ${SECRET-KEY}
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            scope: profile, email
+
 #security:
 #  jwt:
 #    header:
 #    secret:
 #    token-validity-in-seconds:
 #
-#aws:
 #  accessKeyId:
 #  secretKey:
 #  region:
@@ -37,7 +47,6 @@ server:
 management:
   server:
     port: 8080
-
 
 
 

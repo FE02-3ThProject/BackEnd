@@ -22,7 +22,7 @@ public class UserManagementService {
                 .orElseThrow(() -> new UserNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         // 필요한 정보를 UserInfoResponse 객체를 생성하여 반환
-        return new UserInfoResponse(user.getUserId(), user.getNickname(), user.getEmail(), user.getPhoneNumber(), user.getImage(), user.getLocationId());
+        return new UserInfoResponse(user.getUserId(), user.getNickname(), user.getEmail(), user.getPhoneNumber(), user.getImage(), user.getLocationId(),user.getCategoryId());
     }
 
     public UserEditResponse editUserInfo(Long userId, UserEditRequest userEditRequest) {

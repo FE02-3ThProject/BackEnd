@@ -1,6 +1,7 @@
 package com.github.gather.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Builder
 @Entity
 @Table(name = "category")
 public class Category {
@@ -20,6 +22,8 @@ public class Category {
 
     @Column(name = "name")
     private String name;
+
+
 
 }
 
