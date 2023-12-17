@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(request); //Request의 헤더에서 토큰을 불러와서 저장
 
         if (token != null && jwtTokenProvider.validateToken(token)) { //토큰이 유효한지 검사
-            Long userId = jwtTokenProvider.findUserIdBytoken(token);
+
             // AccessToken이 만료되었다면
             if (!jwtTokenProvider.validateToken(token)) {
                 // 여기서 RefreshToken을 사용하여 새로운 AccessToken을 발급받는 로직 추가
@@ -39,7 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            TokenContext.setProfileId(userId);
         }
 
 
