@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDate;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/groupImg")
+@RequestMapping("/api/image")
 public class ImageController {
 
     private final GroupService groupService;
@@ -63,9 +64,10 @@ public class ImageController {
                     .build();
 
             groupService.createGroup(userPrincipal.getName(), newGroupRequest);
+
         } catch (Exception e) {
-            // 그룹 생성 관련 에러 처리
-            log.error("그룹 생성 중 오류 발생", e);
+            // 에러 처리
+            log.error("그룹 생성 중 오류 발생", e);  // 에러 로그 출력
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("그룹 생성 중 오류 발생: " + e.getMessage());
         }
 
@@ -73,3 +75,4 @@ public class ImageController {
         return ResponseEntity.ok("업로드 성공");
     }
 }
+

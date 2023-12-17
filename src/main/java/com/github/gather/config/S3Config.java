@@ -19,7 +19,6 @@ public class S3Config {
     @org.springframework.beans.factory.annotation.Value("region")
     private String region;
 
-
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
