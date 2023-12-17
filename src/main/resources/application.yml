@@ -27,17 +27,13 @@ spring:
             client-secret:
             scope: profile, email
 
-#security:
-#  jwt:
-#    header:
-#    secret:
-#    token-validity-in-seconds:
-#
-#  accessKeyId:
-#  secretKey:
-#  region:
-#  s3:
-#    bucketName:
+security:
+
+  accessKeyId:
+  secretKey:
+  region:
+  s3:
+    bucketName:
 
 logging:
   level:
