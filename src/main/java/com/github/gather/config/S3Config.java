@@ -19,8 +19,6 @@ public class S3Config {
     @org.springframework.beans.factory.annotation.Value("region넣으세요.")
     private String region;
 
-    @org.springframework.beans.factory.annotation.Value("project2team넣으세요.")
-    private String bucketName;
 
     @Bean
     public S3Client s3Client() {
