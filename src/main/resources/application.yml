@@ -15,22 +15,24 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+
+  secret-key: ${SECRET-KEY}
+
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 
+            client-id:
             client-secret:
             scope: profile, email
-  secret-key: ${SECRET-KEY}
+
 #security:
 #  jwt:
 #    header:
 #    secret:
 #    token-validity-in-seconds:
 #
-#aws:
 #  accessKeyId:
 #  secretKey:
 #  region:
