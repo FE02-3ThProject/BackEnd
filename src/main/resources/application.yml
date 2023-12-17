@@ -33,7 +33,7 @@ security:
   secretKey:
   region:
   s3:
-    bucketName: 
+    bucketName:
 
 logging:
   level:
