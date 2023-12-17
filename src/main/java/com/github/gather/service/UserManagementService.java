@@ -22,7 +22,7 @@ public class UserManagementService {
                 .orElseThrow(() -> new UserNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         // 필요한 정보를 UserInfoResponse 객체를 생성하여 반환
-        return new UserInfoResponse(user.getUserId(), user.getNickname(), user.getEmail(), user.getPhoneNumber(), user.getImage(), user.getLocationId(),user.getCategoryId());
+        return new UserInfoResponse(user.getUserId(), user.getNickname(), user.getEmail(),  user.getImage(), user.getLocationId(),user.getCategoryId());
     }
 
     public UserEditResponse editUserInfo(Long userId, UserEditRequest userEditRequest) {
@@ -38,7 +38,6 @@ public class UserManagementService {
         String encodedPassword = passwordEncoder.encode(userEditRequest.getPassword());
         user.setPassword(encodedPassword);
 
-        user.setPhoneNumber(userEditRequest.getPhoneNumber());
         user.setImage(userEditRequest.getImage());
         user.setLocationId(userEditRequest.getLocation());
 
@@ -52,7 +51,6 @@ public class UserManagementService {
         response.setNickname(updatedUser.getNickname());
         response.setEmail(updatedUser.getEmail());
         response.setPassword(encodedPassword);  // 인코딩된 비밀번호 설정
-        response.setPhoneNumber(updatedUser.getPhoneNumber());
         response.setImage(updatedUser.getImage());
         response.setLocation(updatedUser.getLocationId());
 
