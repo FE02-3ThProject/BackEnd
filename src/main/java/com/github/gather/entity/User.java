@@ -42,6 +42,9 @@ public class User implements UserDetails {
     @Column(name = "nickname")
     private String nickname;
 
+    @Column(name = "introduction")
+    private String introduction;
+
     @Column(name = "image")
     private String image;
 

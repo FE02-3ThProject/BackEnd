@@ -6,6 +6,7 @@ import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
 import com.github.gather.entity.User;
 import com.github.gather.repositroy.UserRepository;
+import com.github.gather.security.JwtTokenProvider;
 import com.github.gather.security.TokenContext;
 import com.github.gather.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
-
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     @PostMapping(value = "/signup")
@@ -72,16 +74,18 @@ public class UserController {
 
     @Transactional
     @PostMapping("/logout")
-    public ResponseEntity<?> userLogout() {
-        Long userId = TokenContext.getProfileId();
+    public ResponseEntity<?> userLogout(HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+        Long userId = jwtTokenProvider.findUserIdBytoken(token);
         userService.logout(userId);
         return ResponseEntity.ok("로그아웃 성공");
     }
 
     @Transactional
     @DeleteMapping("/userDelete")
-    public ResponseEntity<?> userDelete(){
-        Long userIdx = TokenContext.getProfileId();
+    public ResponseEntity<?> userDelete(HttpServletRequest request){
+        String token = jwtTokenProvider.resolveToken(request);
+        Long userIdx = jwtTokenProvider.findUserIdBytoken(token);
         userService.deleteUser(userIdx);
         return ResponseEntity.ok("회원 탈퇴 성공");
     }
