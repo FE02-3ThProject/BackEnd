@@ -18,17 +18,22 @@ spring:
 
   secret-key: ${SECRET-KEY}
 
-#security:
-#  jwt:
-#    header:
-#    secret:
-#    token-validity-in-seconds:
-#
-#  accessKeyId:
-#  secretKey:
-#  region:
-#  s3:
-#    bucketName:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            scope: profile, email
+
+security:
+
+  accessKeyId:
+  secretKey:
+  region:
+  s3:
+    bucketName: 
 
 logging:
   level:

@@ -43,6 +43,9 @@ dependencies {
 	// 웹 소켓
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework:spring-websocket'
+
+	// OAuth2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('bootBuildImage') {
