@@ -36,7 +36,7 @@ public class GroupServiceImpl implements GroupService {
     GroupTable group;
     Location location;
     Category category;
-    GroupMember groupLeader;
+
 
 
 
@@ -144,15 +144,15 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
-    // 4. 모임 전체 조회
+    // 4. 모임 전체 조회 Test
     @Override
     public List<GroupListResponse> searchAllGroups() {
         List<GroupListResponse> groupList = new ArrayList<>();
-        //List<GroupMember> groupMembers = new ArrayList<>();
+        /*GroupMember groupLeader;*/
 
         List<GroupTable> allGroups = groupRepository.searchAllGroups();
         for (GroupTable groupTable : allGroups) {
-
+/*
             List<GroupMember> groupMembers = groupMemberRepository.findGroupMemebersByGroupId(groupTable.getGroupId());
 
             for (GroupMember groupMember : groupMembers) {
@@ -161,7 +161,7 @@ public class GroupServiceImpl implements GroupService {
                 }
             }
 
-            if (groupLeader != null) {
+            if (groupLeader != null) {*/
                 GroupListResponse group = GroupListResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -171,10 +171,10 @@ public class GroupServiceImpl implements GroupService {
                         .image(groupTable.getImage())
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
-                        .leaderEmail(groupLeader.getUserId().getEmail())
+                        //.leaderEmail(groupLeader.getUserId().getEmail())
                         .build();
                 groupList.add(group);
-            }
+            /*}*/
         }
             return  groupList;
 
