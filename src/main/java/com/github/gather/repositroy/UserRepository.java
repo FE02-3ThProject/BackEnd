@@ -2,6 +2,7 @@ package com.github.gather.repositroy;
 
 
 import com.github.gather.entity.User;
+import com.github.gather.oauth2.SocialType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Boolean existsByEmail(String email);
 
     Boolean existsByNickname(String nickname);
+
+    Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
+
 }

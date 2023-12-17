@@ -12,7 +12,6 @@ import lombok.*;
 public class UserLoginResponse {
     private String email;
     private String nickname;
-    private String phoneNumber;
     private Location location;
     private String image;
     private UserRole userRole;
