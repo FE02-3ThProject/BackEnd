@@ -22,5 +22,6 @@ public class GroupListByCategoryResponse {
     private String image;
     private Integer maxMembers;
     private LocalDate createdAt;
+    private Long joinedGroupMembers;
 
 }

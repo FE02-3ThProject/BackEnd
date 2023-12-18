@@ -23,17 +23,17 @@ spring:
       client:
         registration:
           google:
-            client-id:
-            client-secret:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
             scope: profile, email
 
 security:
 
-  accessKeyId:
-  secretKey:
-  region:
+  accessKeyId: ${ACCESSKEY_ID}
+  secretKey: ${SECRET_KEY}
+  region: ${REGION}
   s3:
-    bucketName: 
+    bucketName: ${BUCKET_NAME}
 
 logging:
   level:

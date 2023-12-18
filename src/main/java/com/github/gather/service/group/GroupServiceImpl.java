@@ -128,7 +128,7 @@ public class GroupServiceImpl implements GroupService {
 
         List<GroupTable> allGroups = groupRepository.searchAllGroups();
         for (GroupTable groupTable : allGroups) {
-            GroupMember groupLeader = groupMemberRepository.findGroupMemberByRoleLeader(groupTable.getGroupId());
+            Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
             GroupListResponse group = GroupListResponse.builder()
                     .groupId(groupTable.getGroupId())
                     .locationName(groupTable.getLocationId().getName())
@@ -138,7 +138,7 @@ public class GroupServiceImpl implements GroupService {
                     .image(groupTable.getImage())
                     .maxMembers(groupTable.getMaxMembers())
                     .createdAt(groupTable.getCreatedAt())
-                    .leaderEmail(groupLeader.getUserId().getEmail())
+                    .joinedGroupMembers(countedGroupMembers)
                     .build();
             groupList.add(group);
         }
@@ -205,13 +205,16 @@ public class GroupServiceImpl implements GroupService {
         return groupMemberList;
     }
 
+    //카테고리별 모임 조회
     @Override
     public List<GroupListByCategoryResponse> searchGroupsByCategoryId(Long categoryId) {
         List<GroupListByCategoryResponse> groupList = new ArrayList<>();
 
         List<GroupTable> groupListByCategoryId = groupRepository.findByCategoryId(categoryId);
+
         if (groupListByCategoryId != null) {
             for (GroupTable groupTable : groupListByCategoryId) {
+                Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
                 GroupListByCategoryResponse group = GroupListByCategoryResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -221,6 +224,7 @@ public class GroupServiceImpl implements GroupService {
                         .image(groupTable.getImage())
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
+                        .joinedGroupMembers(countedGroupMembers)
                         .build();
                 groupList.add(group);
             }
@@ -230,6 +234,7 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+    //지역별 모임 조회
     @Override
     public List<GroupListByLocationResponse> searchGroupsByLocationId(Long locationId) {
         List<GroupListByLocationResponse> groupList = new ArrayList<>();
@@ -238,6 +243,7 @@ public class GroupServiceImpl implements GroupService {
         List<GroupTable> groupListByLocationId = groupRepository.findByLocationId(locationId);
         if (groupListByLocationId != null) {
             for (GroupTable groupTable : groupListByLocationId) {
+                Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
                 GroupListByLocationResponse group = GroupListByLocationResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -247,6 +253,7 @@ public class GroupServiceImpl implements GroupService {
                         .image(groupTable.getImage())
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
+                        .joinedGroupMembers(countedGroupMembers)
                         .build();
                 groupList.add(group);
             }
@@ -256,12 +263,16 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+
+    //제목별 모임 조회
     @Override
     public List<GroupListByTitleResponse> findByTitleContaining(String title) {
         List<GroupListByTitleResponse> groupList = new ArrayList<>();
         List<GroupTable> groupListByTitle = groupRepository.findByTitleContaining(title);
+
         if (groupListByTitle != null) {
             for (GroupTable groupTable : groupListByTitle) {
+                Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
                 GroupListByTitleResponse group = GroupListByTitleResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -271,6 +282,7 @@ public class GroupServiceImpl implements GroupService {
                         .image(groupTable.getImage())
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
+                        .joinedGroupMembers(countedGroupMembers)
                         .build();
                 groupList.add(group);
             }

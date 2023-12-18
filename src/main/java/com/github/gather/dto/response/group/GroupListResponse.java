@@ -22,6 +22,6 @@ public class GroupListResponse {
     private String image;
     private Integer maxMembers;
     private LocalDate createdAt;
-    private String leaderEmail;
+    private Long joinedGroupMembers;
 
 }
