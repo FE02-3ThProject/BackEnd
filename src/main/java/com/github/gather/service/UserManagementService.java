@@ -1,8 +1,8 @@
 package com.github.gather.service;
 
 import com.github.gather.dto.request.UserEditRequest;
-import com.github.gather.dto.response.UserEditResponse;
-import com.github.gather.dto.response.UserInfoResponse;
+import com.github.gather.dto.response.*;
+import com.github.gather.entity.Category;
 import com.github.gather.entity.User;
 import com.github.gather.exception.UserNotFoundException;
 import com.github.gather.repositroy.UserRepository;
@@ -21,9 +21,21 @@ public class UserManagementService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("회원 정보를 찾을 수 없습니다."));
 
+        // Location 엔티티를 LocationResponse로 변환
+        LocationResponse locationResponse = new LocationResponse(user.getLocationId().getLocationId(), user.getLocationId().getName());
+        GroupCategoryResponse category = new GroupCategoryResponse(user.getLocationId().getLocationId(), user.getUsername());
+        IntroductionResponse introductionResponse = new IntroductionResponse();
+
         // 필요한 정보를 UserInfoResponse 객체를 생성하여 반환
-        return new UserInfoResponse(user.getUserId(), user.getNickname(), user.getEmail(), user.getPhoneNumber(), user.getImage(), user.getLocationId());
-    }
+        return new UserInfoResponse(
+                user.getUserId(),
+                user.getNickname(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getImage(),
+                locationResponse,
+                category,
+                introductionResponse);};
 
     public UserEditResponse editUserInfo(Long userId, UserEditRequest userEditRequest) {
         User user = userRepository.findById(userId)

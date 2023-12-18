@@ -5,6 +5,7 @@ import com.github.gather.dto.request.UserEditRequest;
 import com.github.gather.dto.response.UserEditResponse;
 import com.github.gather.dto.response.UserInfoResponse;
 import com.github.gather.exception.UserNotFoundException;
+import com.github.gather.service.IntroductionService;
 import com.github.gather.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserManagementController {
 
     private final UserManagementService userManagementService;
+    private final IntroductionService introductionService;
 
     @GetMapping("/info")
     public ResponseEntity<UserInfoResponse> getUserInfo(@RequestParam String email) {

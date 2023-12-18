@@ -1,5 +1,7 @@
 package com.github.gather.controller;
 
+import com.github.gather.dto.request.GroupCategoryRequest;
+import com.github.gather.dto.response.UserInfoResponse;
 import com.github.gather.entity.Category;
 import com.github.gather.service.UserCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/api/group/category")
 public class CategoryController {
+
 
     private final UserCategoryService categoryService;
 
@@ -26,22 +29,21 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
-    // 특정 카테고리 조회
+    // 카테고리별 모임 조회
     @GetMapping("/{categoryId}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long categoryId) {
-        Category category = categoryService.getCategoryById(categoryId);
-        return ResponseEntity.ok(category);
+    public ResponseEntity<UserInfoResponse> getCategoryById(@PathVariable Long categoryId) {
+        UserInfoResponse userInfo = UserCategoryService.getCategoryInfo(categoryId);
+        return ResponseEntity.ok(userInfo);
     }
 
     // 새로운 카테고리 생성
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category createdCategory = categoryService.createCategory(category);
+    public ResponseEntity<Category> createCategory(@RequestBody GroupCategoryRequest request) {
+        Category createdCategory = categoryService.createCategory(request);
         return ResponseEntity.ok(createdCategory);
     }
 
-
-    // 회원이 카테고리 수정
+    // 카테고리 수정
     @PutMapping("/{categoryId}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long categoryId, @RequestBody Category updatedCategory) {
         Category existingCategory = categoryService.updateCategory(categoryId, updatedCategory);
@@ -52,6 +54,7 @@ public class CategoryController {
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
-        return ResponseEntity.ok("Category deleted successfully.");
+        return ResponseEntity.ok("카테고리가 되었습니다.");
     }
 }
+

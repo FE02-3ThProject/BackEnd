@@ -1,7 +1,7 @@
 package com.github.gather.dto.response;
 
-import com.github.gather.entity.Location;
 import lombok.*;
+
 
 @Getter
 @Setter
@@ -12,15 +12,34 @@ public class UserInfoResponse {
     private String email;
     private String phoneNumber;
     private String image;
-    private Location locationId;
+    private LocationResponse location;
+    private GroupCategoryResponse category;
+    private IntroductionResponse introduction;
 
-    public UserInfoResponse(Long userId, String nickname, String email, String phoneNumber, String image, Location location) {
+    public UserInfoResponse(Long userId, String nickname, String email, String phoneNumber, String image, LocationResponse location, GroupCategoryResponse category, IntroductionResponse introduction) {
         this.userId = userId;
         this.nickname = nickname;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.image = image;
-        this.locationId = location;
+        this.location = location;
+        this.category = category;
+        this.introduction = introduction;
     }
 
+    public UserInfoResponse() {
+        
+    }
+
+    public void setAboutMe(String s) {
+    }
+
+    public void setCategoryId(Long categoryId) {
+    }
+
+    public void setLocationId(Long categoryId) {
+
+    }
 }
+
+
