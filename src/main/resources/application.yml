@@ -3,20 +3,52 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     url: ${DB_URL}
+    tomcat:
+      validation-query: "select 1"
+
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     database-platform: org.hibernate.dialect.MariaDBDialect
+
+
   servlet:
     multipart:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
 
-  secret-key: ${SECRET-KEY}
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            scope: profile, email
+
+security:
+  jwt:
+    secret-key: ${SECRET-KEY}
+
+aws:
+  accessKeyId: AKIA2WSJ73WOI2ZIWIMW
+  secretKey: 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
+  region: ap-northeast-2
+  s3:
+    bucketName: project2team
 
 logging:
   level:
     org.springframework.security: DEBUG
+
+server:
+  port: 9090
+management:
+  server:
+    port: 8080
+
+
