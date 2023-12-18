@@ -2,11 +2,13 @@ package com.github.gather.controller;
 
 
 import com.github.gather.dto.request.UserEditRequest;
+import com.github.gather.dto.response.ErrorResponse;
 import com.github.gather.dto.response.UserEditResponse;
 import com.github.gather.dto.response.UserInfoResponse;
 import com.github.gather.exception.UserNotFoundException;
 import com.github.gather.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +20,10 @@ public class UserManagementController {
     private final UserManagementService userManagementService;
 
     @GetMapping("/info")
-    public ResponseEntity<UserInfoResponse> getUserInfo(@RequestParam String email) {
-        try {
-            UserInfoResponse userInfo = userManagementService.getUserInfo(email);
-            return ResponseEntity.ok(userInfo);
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public UserInfoResponse getUserInfo(@RequestParam String email) throws UserNotFoundException {
+        UserInfoResponse userInfo = userManagementService.getUserInfo(email);
+        // 예외가 발생하지 않으면 정상적인 응답을 반환
+        return userInfo;
     }
 
 
