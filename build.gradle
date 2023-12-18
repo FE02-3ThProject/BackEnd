@@ -55,3 +55,7 @@ tasks.named('bootBuildImage') {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.withType(Zip) {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}

@@ -23,4 +23,6 @@ public interface GroupRepository extends JpaRepository<GroupTable,Long> {
     List<GroupTable> searchAllGroups();
 
 
+    @Query("SELECT g FROM GroupTable g WHERE g.groupId = :groupId")
+    GroupTable findbyGroupId(Long groupId);
 }
