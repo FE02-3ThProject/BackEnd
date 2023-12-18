@@ -3,6 +3,7 @@ package com.github.gather.service;
 import com.github.gather.dto.request.UserEditRequest;
 import com.github.gather.dto.response.*;
 import com.github.gather.entity.User;
+import com.github.gather.exception.CategoryNotFoundException;
 import com.github.gather.exception.UserNotFoundException;
 import com.github.gather.repositroy.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +25,20 @@ public class UserManagementService {
 
         LocationResponse locationResponse = user.getLocationId() != null ?
                 new LocationResponse(user.getLocationId().getLocationId(), user.getLocationId().getName()) : null;
-        GroupCategoryResponse category = user.getCategory() != null ?
-                new GroupCategoryResponse(user.getCategory().getCategoryId()) : null;
+
+        Long categoryId = null;
+        String categoryName = null;
+        if(user.getCategory() != null) {
+            categoryId = user.getCategory().getCategoryId();
+            categoryName = user.getCategory().getCategoryName();
+        }
+
+        GroupCategoryResponse category = new GroupCategoryResponse(categoryId, categoryName);
 
         IntroductionResponse introductionResponse = introductionService.getIntroduction();
 
-        // 유저 위치와 카테고리가 없을 경우에도,
-        // 나머지 사용자 데이터를 반환하세요.
+        // Even if the user location and category are missing,
+        // return the other user data:
         return new UserInfoResponse(
                 user.getUserId(),
                 user.getNickname(),
@@ -41,8 +49,6 @@ public class UserManagementService {
                 introductionResponse
         );
     }
-
-    // remaining code
 
     public UserEditResponse editUserInfo(Long userId, UserEditRequest userEditRequest) {
         User user = userRepository.findById(userId)
