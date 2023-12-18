@@ -118,6 +118,12 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "bookmarkedBy")
     private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
 
+    public void setLocationId(Location locationId) {
+        this.locationId = locationId;
+    }
 
+    public void setCategoryId(Category categoryId) {
+        this.categoryId = categoryId;
+    }
 }
 

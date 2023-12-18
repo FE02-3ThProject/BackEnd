@@ -19,12 +19,12 @@ import java.time.LocalDate;
 @Slf4j
 @RestController
 @RequestMapping("/api/group")
-public class ImageController {
+public class GroupImageController {
 
     private final GroupService groupService;
     private final S3Service s3Service;
 
-    public ImageController(GroupService groupService, S3Service s3Service) {
+    public GroupImageController(GroupService groupService, S3Service s3Service) {
         this.groupService = groupService;
         this.s3Service = s3Service;
     }

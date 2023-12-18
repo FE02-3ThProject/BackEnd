@@ -1,5 +1,6 @@
 package com.github.gather.service;
 
+import com.github.gather.dto.UserInfoDto;
 import com.github.gather.dto.request.UserLoginRequest;
 import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.github.gather.entity.User;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -35,7 +37,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
-
 
     public User signup(UserSignupRequest userData) {
         if (!checkUser(userData.getEmail())) {
@@ -170,5 +171,43 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    // 유저 정보 수정
+    public UserInfoDto updateUserInfo(String email, UserInfoDto userInfoDto) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        if (userInfoDto.getNickname() != null) {
+            user.setNickname(userInfoDto.getNickname());
+        }
+        if (userInfoDto.getLocationId() != null) {
+            Location location = getLocationById(userInfoDto.getLocationId());
+            user.setLocationId(location);
+        }
+        if (userInfoDto.getCategoryId() != null) {
+            Category category = getCategoryById(userInfoDto.getCategoryId());
+            user.setCategoryId(category);
+        }
+
+        User updatedUser = userRepository.save(user);
+
+        return UserInfoDto.builder()
+                .nickname(updatedUser.getNickname())
+                .locationId(updatedUser.getLocationId().getLocationId())
+                .categoryId(updatedUser.getCategoryId().getCategoryId())
+                .image(updatedUser.getImage())
+                .introduction(updatedUser.getIntroduction())
+                .build();
+    }
+
+    private Location getLocationById(Long locationId) {
+        return locationRepository.findById(locationId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 위치를 찾을 수 없습니다."));
+    }
+
+    private Category getCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 카테고리를 찾을 수 없습니다."));
     }
 }
