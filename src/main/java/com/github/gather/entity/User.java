@@ -100,11 +100,13 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
+    @Builder.Default
     private Set<UserGroupTable> joinGroups = new HashSet<>();
 
 
     // 북마크한 그룹 목록
     @ManyToMany(mappedBy = "bookmarkedBy")
+    @Builder.Default
     private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
 }
 

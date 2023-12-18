@@ -27,12 +27,7 @@ public class UserGroupTable {
 
 
     // 그룹에 참여한 사용자 목록
-    @ManyToMany
-    @JoinTable(
-            name = "user_group_member",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @ManyToMany(mappedBy = "joinGroups")
     private Set<User> members = new HashSet<>();
 
 

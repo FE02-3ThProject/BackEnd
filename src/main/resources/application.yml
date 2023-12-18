@@ -1,11 +1,10 @@
 spring:
   datasource:
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    url: ${DB_URL}
+    username: backend2team
+    password: supercoding09
+    url: jdbc:mariadb://db-project3.cryqvukdhzno.ap-northeast-2.rds.amazonaws.com:3306/communityRoom
     tomcat:
       validation-query: "select 1"
-
 
   jpa:
     hibernate:
@@ -30,9 +29,7 @@ spring:
             client-secret:
             scope: profile, email
 
-security:
-  jwt:
-    secret-key: ${SECRET-KEY}
+    secret-key: supercoding
 
 aws:
   accessKeyId: AKIA2WSJ73WOI2ZIWIMW

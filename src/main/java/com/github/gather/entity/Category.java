@@ -21,5 +21,7 @@ public class Category {
     @Column(name = "name")
     private String name;
 
+    public void setName(String name) {
+    }
 }
 
