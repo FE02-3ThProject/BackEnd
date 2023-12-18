@@ -29,6 +29,10 @@ public class User implements UserDetails {
     @JoinColumn(name = "location_id")
     private Location locationId;
 
+    @ManyToOne
+    @JoinColumn(name = "favorite_category")
+    private Category categoryId;
+
     @Column(name = "email")
     private String email;
 
@@ -57,7 +61,6 @@ public class User implements UserDetails {
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
-    private Long categoryId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -3,6 +3,7 @@ package com.github.gather.service;
 import com.github.gather.dto.request.UserEditRequest;
 import com.github.gather.dto.response.*;
 import com.github.gather.entity.User;
+import com.github.gather.exception.CategoryNotFoundException;
 import com.github.gather.exception.UserNotFoundException;
 import com.github.gather.repositroy.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,6 @@ public class UserManagementService {
                 introductionResponse
         );
     }
-
-    // remaining code
 
     public UserEditResponse editUserInfo(Long userId, UserEditRequest userEditRequest) {
         User user = userRepository.findById(userId)
