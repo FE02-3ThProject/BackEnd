@@ -176,7 +176,7 @@ public class UserService {
     // 유저 정보 수정
     public UserInfoDto updateUserInfo(String email, UserInfoDto userInfoDto) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
 
         if (userInfoDto.getNickname() != null) {
             user.setNickname(userInfoDto.getNickname());
@@ -188,6 +188,13 @@ public class UserService {
         if (userInfoDto.getCategoryId() != null) {
             Category category = getCategoryById(userInfoDto.getCategoryId());
             user.setCategoryId(category);
+        }
+
+        if (userInfoDto.getImage() != null) {
+            user.setImage(userInfoDto.getImage());
+        }
+        if (userInfoDto.getIntroduction() != null) {
+            user.setIntroduction(userInfoDto.getIntroduction());
         }
 
         User updatedUser = userRepository.save(user);

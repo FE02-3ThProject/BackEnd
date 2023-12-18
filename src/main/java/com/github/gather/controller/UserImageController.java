@@ -58,7 +58,6 @@ public class UserImageController {
                     .introduction(introduction)
                     .build();
 
-            // 유저 정보 업데이트
             UserInfoDto updatedUserInfo = userService.updateUserInfo(email, userInfoDto);
 
             // 업로드 성공 메시지 반환
