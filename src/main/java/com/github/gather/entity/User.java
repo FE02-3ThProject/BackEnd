@@ -1,5 +1,6 @@
 package com.github.gather.entity;
 
+import com.github.gather.dto.response.GroupCategoryResponse;
 import com.github.gather.entity.Role.UserRole;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,11 +57,7 @@ public class User implements UserDetails {
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
-
-
-
-//    @OneToMany(mappedBy = "user")
-//    private List<UserGroup> userGroups;    // UserGroup과 양방향 관계를 맺기 위해 생성
+    private Long categoryId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -108,5 +105,10 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "bookmarkedBy")
     @Builder.Default
     private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
+
+
+    public GroupCategoryResponse getCategory() {
+        return null;
+    }
 }
 

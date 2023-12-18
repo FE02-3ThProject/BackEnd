@@ -29,7 +29,7 @@ public class UserGroupController {
         return ResponseEntity.ok(bookmarkedUserGroups);
     }
 
-    @PostMapping("/bookmark/{groupId}")
+    @GetMapping("/bookmark/{groupId}")
     public ResponseEntity<String> bookmarkUserGroup(@AuthenticationPrincipal User user, @PathVariable Long groupId) {
         userGroupService.bookmarkUserGroup(user, groupId);
         return ResponseEntity.ok("그룹을 즐겨찾기에 추가했습니다.");
