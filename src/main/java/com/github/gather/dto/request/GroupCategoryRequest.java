@@ -28,6 +28,6 @@ public class GroupCategoryRequest {
     }
 
     public String getName() {
-        return null;
+        return this.categoryName;
     }
 }
