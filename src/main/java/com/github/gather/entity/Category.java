@@ -20,5 +20,9 @@ public class Category {
 
     @Column(name = "name")
     private String name;
+
+    public String getCategoryName() {
+        return this.name;
+    }
 }
 

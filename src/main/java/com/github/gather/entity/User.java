@@ -110,8 +110,5 @@ public class User implements UserDetails {
     private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
 
 
-    public GroupCategoryResponse getCategory() {
-        return null;
-    }
 }
 

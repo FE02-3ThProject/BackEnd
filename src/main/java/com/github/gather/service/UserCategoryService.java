@@ -14,15 +14,14 @@ import java.util.Optional;
 public class UserCategoryService {
 
     private final UserCategoryRepository userCategoryRepository;
-    private GroupCategoryResponse category;
 
     public GroupCategoryResponse getCategoryInfo(Long categoryId) {
         Category category = userCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CategoryNotFoundException("카테고리가 없습니다."));
 
-
         // Convert Category entity to GroupCategoryResponse and return
-        return new GroupCategoryResponse(category.getCategoryId(), category.getName());
+        return new GroupCategoryResponse(category.getCategoryId(), category.getCategoryName());
+    }
 }
 
     // 카테고리별 모임 조회
@@ -34,7 +33,7 @@ public class UserCategoryService {
 //    public String getCategoryName(Long categoryId) {
 //        Category category = getCategoryById(categoryId);
 //        return category.getName();
-    }
+
 
     // Search for the category corresponding to a specific ID
 //    private Category getCategoryById(Long categoryId) {

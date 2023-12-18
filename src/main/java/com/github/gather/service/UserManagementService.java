@@ -2,9 +2,10 @@ package com.github.gather.service;
 
 import com.github.gather.dto.request.UserEditRequest;
 import com.github.gather.dto.response.*;
+import com.github.gather.entity.Category;
 import com.github.gather.entity.User;
-import com.github.gather.exception.CategoryNotFoundException;
 import com.github.gather.exception.UserNotFoundException;
+import com.github.gather.repositroy.UserEditRepository;
 import com.github.gather.repositroy.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,9 +16,9 @@ import org.springframework.stereotype.Service;
 public class UserManagementService {
 
 
-    private final UserRepository userRepository;
+    private final UserEditRepository userRepository;
+    private final IntroductionService introductionService; // IntroductionService 주입 추가
     private final PasswordEncoder passwordEncoder;
-    private final IntroductionService introductionService;
 
     public UserInfoResponse getUserInfo(String email) throws UserNotFoundException {
         User user = userRepository.findByEmail(email)
@@ -26,16 +27,14 @@ public class UserManagementService {
         LocationResponse locationResponse = user.getLocationId() != null ?
                 new LocationResponse(user.getLocationId().getLocationId(), user.getLocationId().getName()) : null;
 
-        Long categoryId = null;
-        String categoryName = null;
-        if(user.getCategory() != null) {
-            categoryId = user.getCategory().getCategoryId();
-            categoryName = user.getCategory().getCategoryName();
+        GroupCategoryResponse groupCategoryResponse = null;
+        if (user.getCategoryId() != null) {
+            GroupCategoryResponse categoryResponse = new GroupCategoryResponse(user.getCategoryId().getCategoryId(), user.getCategoryId().getCategoryName());
         }
 
-        GroupCategoryResponse category = new GroupCategoryResponse(categoryId, categoryName);
-
         IntroductionResponse introductionResponse = introductionService.getIntroduction();
+
+        // 나머지 코드...
 
         // Even if the user location and category are missing,
         // return the other user data:
@@ -45,7 +44,7 @@ public class UserManagementService {
                 user.getEmail(),
                 user.getImage(),
                 locationResponse,
-                category,
+                groupCategoryResponse,
                 introductionResponse
         );
     }

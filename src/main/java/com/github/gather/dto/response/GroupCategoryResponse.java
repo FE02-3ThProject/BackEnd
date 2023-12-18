@@ -1,14 +1,14 @@
 package com.github.gather.dto.response;
 
+
 public class GroupCategoryResponse {
 
     private Long categoryId;
-    private String categoryName;  // Add this line
+    private String categoryName;
 
-    // modified constructor
     public GroupCategoryResponse(Long categoryId, String categoryName) {
         this.categoryId = categoryId;
-        this.categoryName = categoryName;  // Add this line
+        this.categoryName = categoryName;
     }
 
     public Long getCategoryId() {
@@ -19,12 +19,12 @@ public class GroupCategoryResponse {
         this.categoryId = categoryId;
     }
 
-    public String getCategoryName() {  // Add this method
+    public String getCategoryName() {
         return categoryName;
     }
 
-    public void setCategoryName(String categoryName) {  // Add this method
+    public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-}
 
+}
