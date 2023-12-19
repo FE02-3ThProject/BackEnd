@@ -28,4 +28,9 @@ public interface GroupService {
     void transferLeader(Long groupId, Long newLeaderId, User currentUser);
 
     void kickMember(Long groupId, Long userId, User currentUser);
+
+
+    GroupDetailResponse getGroupDetail(Long groupId);
+
+    List<GroupMemberListResponse> findGroupMembers(Long groupId);
 }

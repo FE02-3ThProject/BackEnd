@@ -18,7 +18,7 @@ public class UserManagementService {
     private final PasswordEncoder passwordEncoder;
 
     public UserInfoResponse getUserInfo(String email) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new UserNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         // 필요한 정보를 UserInfoResponse 객체를 생성하여 반환

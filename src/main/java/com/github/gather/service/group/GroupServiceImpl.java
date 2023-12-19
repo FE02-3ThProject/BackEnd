@@ -36,7 +36,6 @@ public class GroupServiceImpl implements GroupService {
     private final ChatRoomRepository chatRoomRepository;
 
     User user;
-    GroupTable group;
     Location location;
     Category category;
 
@@ -128,29 +127,94 @@ public class GroupServiceImpl implements GroupService {
         List<GroupListResponse> groupList = new ArrayList<>();
 
         List<GroupTable> allGroups = groupRepository.searchAllGroups();
-            for (GroupTable groupTable : allGroups) {
-                GroupListResponse group = GroupListResponse.builder()
-                        .groupId(groupTable.getGroupId())
-                        .locationName(groupTable.getLocationId().getName())
-                        .categoryName(groupTable.getCategoryId().getName())
-                        .title(groupTable.getTitle())
-                        .description(groupTable.getDescription())
-                        .image(groupTable.getImage())
-                        .maxMembers(groupTable.getMaxMembers())
-                        .createdAt(groupTable.getCreatedAt())
-                        .build();
-                groupList.add(group);
-            }
-            return  groupList;
+        for (GroupTable groupTable : allGroups) {
+            Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
+            GroupListResponse group = GroupListResponse.builder()
+                    .groupId(groupTable.getGroupId())
+                    .locationName(groupTable.getLocationId().getName())
+                    .categoryName(groupTable.getCategoryId().getName())
+                    .title(groupTable.getTitle())
+                    .description(groupTable.getDescription())
+                    .image(groupTable.getImage())
+                    .maxMembers(groupTable.getMaxMembers())
+                    .createdAt(groupTable.getCreatedAt())
+                    .joinedGroupMembers(countedGroupMembers)
+                    .build();
+            groupList.add(group);
+        }
+        return  groupList;
     }
 
+
+    //모임 상세 정보 조회 -- 예외처리 필요
+    @Override
+    public GroupDetailResponse getGroupDetail(Long groupId) {
+        //groupId로 GroupTable 찾아오기
+        GroupTable existingGroup = groupRepository.findbyGroupId(groupId);
+
+        //그룹 리더의 이메일 찾아오기
+        GroupMember groupLeader  = groupMemberRepository.findGroupMemberByRoleLeader(groupId);
+        String leaderEmail = groupLeader.getUserId().getEmail();
+
+        //그룹에 가입된 총인원수 가져오기
+        Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupId);
+
+        //리더 프로필사진 가져오기
+        String leaderProfilePicture = groupLeader.getUserId().getImage();
+
+        //리더 닉네임 가져오기
+        String leaderNickname = groupLeader.getUserId().getNickname();
+
+        //GroupDetailResponse로 변환 후 반환
+        return GroupDetailResponse.builder()
+                .groupId(existingGroup.getGroupId())
+                .locationName(existingGroup.getLocationId().getName())
+                .categoryName(existingGroup.getCategoryId().getName())
+                .title(existingGroup.getTitle())
+                .description(existingGroup.getDescription())
+                .image(existingGroup.getImage())
+                .maxMembers(existingGroup.getMaxMembers())
+                .createdAt(existingGroup.getCreatedAt())
+                .leaderEmail(leaderEmail)
+                .leaderNickname(leaderNickname)
+                .leaderProfilePicture(leaderProfilePicture)
+                .joinedGroupMembers(countedGroupMembers)
+                .build();
+
+
+    }
+
+    // 모임 멤버 조회 --예외처리 필요
+    @Override
+    public List<GroupMemberListResponse> findGroupMembers(Long groupId) {
+        List<GroupMemberListResponse> groupMemberList = new ArrayList<>();
+
+        List<GroupMember> groupMembers = groupMemberRepository.findGroupMemebersByGroupId(groupId);
+        for(GroupMember foundGroupMember : groupMembers){
+            GroupMemberListResponse groupMember = GroupMemberListResponse.builder()
+                    .email(foundGroupMember.getUserId().getEmail())
+                    .nickname(foundGroupMember.getUserId().getNickname())
+                    .image(foundGroupMember.getUserId().getImage())
+                    .role(foundGroupMember.getRole())
+                    .build();
+
+            groupMemberList.add(groupMember);
+
+        }
+
+        return groupMemberList;
+    }
+
+    //카테고리별 모임 조회
     @Override
     public List<GroupListByCategoryResponse> searchGroupsByCategoryId(Long categoryId) {
         List<GroupListByCategoryResponse> groupList = new ArrayList<>();
 
         List<GroupTable> groupListByCategoryId = groupRepository.findByCategoryId(categoryId);
+
         if (groupListByCategoryId != null) {
             for (GroupTable groupTable : groupListByCategoryId) {
+                Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
                 GroupListByCategoryResponse group = GroupListByCategoryResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -160,6 +224,7 @@ public class GroupServiceImpl implements GroupService {
                         .image(groupTable.getImage())
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
+                        .joinedGroupMembers(countedGroupMembers)
                         .build();
                 groupList.add(group);
             }
@@ -169,6 +234,7 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+    //지역별 모임 조회
     @Override
     public List<GroupListByLocationResponse> searchGroupsByLocationId(Long locationId) {
         List<GroupListByLocationResponse> groupList = new ArrayList<>();
@@ -177,6 +243,7 @@ public class GroupServiceImpl implements GroupService {
         List<GroupTable> groupListByLocationId = groupRepository.findByLocationId(locationId);
         if (groupListByLocationId != null) {
             for (GroupTable groupTable : groupListByLocationId) {
+                Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
                 GroupListByLocationResponse group = GroupListByLocationResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -186,6 +253,7 @@ public class GroupServiceImpl implements GroupService {
                         .image(groupTable.getImage())
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
+                        .joinedGroupMembers(countedGroupMembers)
                         .build();
                 groupList.add(group);
             }
@@ -195,12 +263,16 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+
+    //제목별 모임 조회
     @Override
     public List<GroupListByTitleResponse> findByTitleContaining(String title) {
         List<GroupListByTitleResponse> groupList = new ArrayList<>();
         List<GroupTable> groupListByTitle = groupRepository.findByTitleContaining(title);
+
         if (groupListByTitle != null) {
             for (GroupTable groupTable : groupListByTitle) {
+                Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
                 GroupListByTitleResponse group = GroupListByTitleResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -210,6 +282,7 @@ public class GroupServiceImpl implements GroupService {
                         .image(groupTable.getImage())
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
+                        .joinedGroupMembers(countedGroupMembers)
                         .build();
                 groupList.add(group);
             }
@@ -222,7 +295,7 @@ public class GroupServiceImpl implements GroupService {
 
     //유저 email로 해당 유저 찾기
     public User getUserByEmail(String userEmail) {
-        Optional<User> foundUserOpt = userRepository.findByEmail(userEmail);
+        Optional<User> foundUserOpt = userRepository.findByEmailAndIsDeletedFalse(userEmail);
         if (foundUserOpt.isPresent()) {
             user = foundUserOpt.get();
             return user;
@@ -233,10 +306,9 @@ public class GroupServiceImpl implements GroupService {
 
     //groupId로 해당 group 찾기 (수정, 삭제, 조회시 사용)
     public GroupTable getGroup(Long groupId) {
-        Optional<GroupTable> foundGroupOpt = groupRepository.findById(groupId);
-        if (foundGroupOpt.isPresent()) {
-            group = foundGroupOpt.get();
-            return group;
+        GroupTable foundGroup = groupRepository.findbyGroupId(groupId);
+        if (foundGroup != null) {
+            return foundGroup;
         } else {
             throw new GroupNotFoundException();
         }
@@ -315,6 +387,8 @@ public class GroupServiceImpl implements GroupService {
         // 그룹에서 제거
         groupMemberRepository.delete(member);
     }
+
+
 }
 
 

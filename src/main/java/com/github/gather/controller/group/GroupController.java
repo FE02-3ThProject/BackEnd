@@ -2,13 +2,9 @@ package com.github.gather.controller.group;
 
 import com.github.gather.dto.request.group.CreateGroupRequest;
 import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
-import com.github.gather.dto.response.group.GroupListByCategoryResponse;
-import com.github.gather.dto.response.group.GroupListByLocationResponse;
-import com.github.gather.dto.response.group.GroupListByTitleResponse;
-import com.github.gather.dto.response.group.GroupListResponse;
-import com.github.gather.entity.GroupTable;
+import com.github.gather.dto.response.group.*;
 import com.github.gather.exception.UserRuntimeException;
-import com.github.gather.repositroy.group.GroupRepository;
+import com.github.gather.exception.group.GroupNotFoundException;
 import com.github.gather.security.JwtTokenProvider;
 import com.github.gather.service.group.GroupServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +58,30 @@ public class GroupController {
         }
     }
 
+    //모임 상세 조회
+    @GetMapping(value = "/detail/{groupId}")
+    public ResponseEntity<?> getGroupDetail(@PathVariable Long groupId, HttpServletRequest request) {
+        String userToken = jwtTokenProvider.resolveToken(request);
+        if(userToken != null) {
+            GroupDetailResponse groupDetail = groupService.getGroupDetail(groupId);
+            return ResponseEntity.status(200).body(groupDetail);
+        }else {
+            throw new GroupNotFoundException();
+        }
+    }
+
+    //모임 멤버 조회 -- 모임에 가입한 유저만?
+    @GetMapping(value = "/groupMembers/{groupId}")
+    public ResponseEntity<?> findGroupMemebers(@PathVariable Long groupId, HttpServletRequest request) {
+        String userToken = jwtTokenProvider.resolveToken(request);
+        if(userToken != null) {
+            List<GroupMemberListResponse> groupMembers = groupService.findGroupMembers(groupId);
+            return ResponseEntity.status(200).body(groupMembers);
+        }else {
+            throw new GroupNotFoundException();
+        }
+    }
+
     //카테고리별 모임 조회 --로그인필수
     @GetMapping(value = "/category/{categoryId}")
     public ResponseEntity<?> searchGroupsByCategoryId(@PathVariable Long categoryId,  HttpServletRequest request) {
@@ -98,4 +118,6 @@ public class GroupController {
             throw new UserRuntimeException("모임 지역을 조회하려면 로그인이 필요합니다.");
         }
     }
+
+
 }

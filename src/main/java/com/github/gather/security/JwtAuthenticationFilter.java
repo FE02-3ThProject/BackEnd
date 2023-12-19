@@ -1,5 +1,7 @@
 package com.github.gather.security;
 
+import com.sun.security.auth.UserPrincipal;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -31,6 +33,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 새로운 AccessToken으로 Authentication 객체 생성
                 Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
 
+                // UserPrincipal 생성
+                String userEmail = jwtTokenProvider.getUserPk(token);
+                UserPrincipal userPrincipal = new UserPrincipal(userEmail);
+
+                // UserPrincipal을 Authentication 객체에 추가
+                authentication = new UsernamePasswordAuthenticationToken(
+                        userPrincipal, authentication.getCredentials(), authentication.getAuthorities());
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 // Response 헤더에 새로운 AccessToken을 실어서 보내줄 수 있음
@@ -38,9 +48,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } else {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // UserPrincipal 생성
+                String userEmail = jwtTokenProvider.getUserPk(token);
+                UserPrincipal userPrincipal = new UserPrincipal(userEmail);
+
+                // UserPrincipal을 Authentication 객체에 추가
+                authentication = new UsernamePasswordAuthenticationToken(
+                        userPrincipal, authentication.getCredentials(), authentication.getAuthorities());
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
             }
         }
-
 
         filterChain.doFilter(request, response); //Custom한 필터 등록
     }

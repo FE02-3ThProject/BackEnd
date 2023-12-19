@@ -52,17 +52,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/chat/**").permitAll()
                 .antMatchers("/ws/**").permitAll()
                 .antMatchers("/").permitAll()
+                .antMatchers("/api/group").permitAll()
+                .antMatchers("/api/group/{groupId}").permitAll()
+                .antMatchers("/api/user/info").permitAll()
                 .antMatchers("/Web.html").permitAll()
                 .antMatchers("/Web.js").permitAll()
                 .antMatchers("/error").permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login()
                 .successHandler(oAuth2LoginSuccessHandler)
                 .failureHandler(oAuth2LoginFailureHandler)
                 .userInfoEndpoint().userService(customOAuth2UserService);
-
-
     }
 
     @Bean

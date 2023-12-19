@@ -105,6 +105,7 @@ public class User implements UserDetails {
 
 
     // 그룹에 참여한 그룹 목록
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "user_group_member",
@@ -115,9 +116,16 @@ public class User implements UserDetails {
 
 
     // 북마크한 그룹 목록
+    @Builder.Default
     @ManyToMany(mappedBy = "bookmarkedBy")
     private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
 
+    public void setLocationId(Location locationId) {
+        this.locationId = locationId;
+    }
 
+    public void setCategoryId(Category categoryId) {
+        this.categoryId = categoryId;
+    }
 }
 

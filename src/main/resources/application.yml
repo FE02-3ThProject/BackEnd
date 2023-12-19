@@ -3,6 +3,7 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     url: ${DB_URL}
+
     tomcat:
       validation-query: "select 1"
   jpa:
@@ -23,17 +24,17 @@ spring:
       client:
         registration:
           google:
-            client-id:
-            client-secret:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: profile, email
 
 security:
 
-  accessKeyId:
-  secretKey:
-  region:
+  accessKeyId: ${AWS_ACCESS_KEY_ID}
+  secretKey: ${AWS_SECRET_KEY}
+  region: ${AWS_REGION}
   s3:
-    bucketName: 
+    bucketName: ${AWS_BUCKET_NAME}
 
 logging:
   level:

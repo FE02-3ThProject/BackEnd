@@ -30,7 +30,7 @@ public class GroupPostService {
     private GroupPost convertToEntity(GroupPostDto groupPostDto) {
         GroupTable group = groupTableRepository.findById(groupPostDto.getGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("모임방 정보가 없습니다."));
-        User user = userRepository.findByEmail(groupPostDto.getEmail())
+        User user = userRepository.findByEmailAndIsDeletedFalse(groupPostDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("사용자 정보가 없습니다."));
         return new GroupPost(null, group, groupPostDto.getTitle(), groupPostDto.getContent(), user, LocalDateTime.now(), groupPostDto.getEmail());
     }

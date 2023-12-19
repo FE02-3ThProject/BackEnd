@@ -35,7 +35,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
             String userEmail = jwtTokenProvider.getUserEmail(token);
-            User user = userRepository.findByEmail(userEmail)
+            User user = userRepository.findByEmailAndIsDeletedFalse(userEmail)
                     .orElseThrow(() -> new UsernameNotFoundException("이메일을 찾을 수 없습니다."));
             attributes.put("PRINCIPAL", new StompPrincipal(user.getEmail()));
 

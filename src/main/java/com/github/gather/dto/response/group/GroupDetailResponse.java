@@ -1,18 +1,21 @@
 package com.github.gather.dto.response.group;
 
+import com.github.gather.entity.GroupTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import java.time.LocalDate;
 
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupListByCategoryResponse {
+public class GroupDetailResponse {
 
     private Long groupId;
     private String locationName;
@@ -22,6 +25,8 @@ public class GroupListByCategoryResponse {
     private String image;
     private Integer maxMembers;
     private LocalDate createdAt;
+    private String leaderEmail;
     private Long joinedGroupMembers;
-
+    private String leaderNickname;
+    private String leaderProfilePicture;
 }
