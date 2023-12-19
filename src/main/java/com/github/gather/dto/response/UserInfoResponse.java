@@ -14,14 +14,16 @@ public class UserInfoResponse {
     private String image;
     private Location locationId;
     private Category categoryId;
+    private String introduction;
 
-    public UserInfoResponse(Long userId, String nickname, String email, String image, Location location , Category category) {
+    public UserInfoResponse(Long userId, String nickname, String email, String image, Location location , Category category,String introduction) {
         this.userId = userId;
         this.nickname = nickname;
         this.email = email;
         this.image = image;
         this.locationId = location;
         this.categoryId = category;
+        this.introduction = introduction;
     }
 
 }
