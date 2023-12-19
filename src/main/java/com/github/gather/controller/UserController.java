@@ -1,13 +1,17 @@
 package com.github.gather.controller;
 
 
+import com.github.gather.dto.JoinGroupDto;
 import com.github.gather.dto.request.UserLoginRequest;
 import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
+import com.github.gather.entity.GroupMember;
+import com.github.gather.entity.GroupTable;
 import com.github.gather.entity.User;
 import com.github.gather.repositroy.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import com.github.gather.security.TokenContext;
+import com.github.gather.service.AuthService;
 import com.github.gather.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 @Slf4j
 @RestController
@@ -28,6 +33,7 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AuthService authService;
 
 
     @PostMapping(value = "/signup")
@@ -91,6 +97,13 @@ public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
         return ResponseEntity.ok("회원 탈퇴 성공");
     }
 
+    // 가입한 모임 조회
+    @GetMapping("/joined")
+    public ResponseEntity<List<JoinGroupDto>> getJoinedGroups(HttpServletRequest request) {
+        User user = authService.checkToken(request);
+        List<JoinGroupDto> joinedGroups = userService.getJoinedGroups(user);
+        return ResponseEntity.ok(joinedGroups);
+    }
 
 
 
