@@ -59,6 +59,7 @@ public class UserService {
                 .userRole(UserRole.USER)
                 .isDeleted(false)
                 .isLocked(false)
+                .lockCount(0)
                 .build();
     }
 
