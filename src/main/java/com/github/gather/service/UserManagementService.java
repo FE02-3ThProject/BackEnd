@@ -24,31 +24,26 @@ public class UserManagementService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("사용자 정보를 찾지 못했습니다."));
 
-        LocationResponse locationResponse = user.getLocationId() != null ?
-                new LocationResponse(user.getLocationId().getLocationId(), user.getLocationId().getName()) : null;
+        LocationResponse locationResponse = (user.getLocationId() != null && user.getLocationId().getLocationId() != null && user.getLocationId().getName() != null)
+                ? new LocationResponse(user.getLocationId().getLocationId(), user.getLocationId().getName()) : null;
 
-        GroupCategoryResponse groupCategoryResponse = null;
-        if (user.getCategoryId() != null) {
-            GroupCategoryResponse categoryResponse = new GroupCategoryResponse(user.getCategoryId().getCategoryId(), user.getCategoryId().getCategoryName());
-        }
+        Long categoryId = user.getCategoryId().getCategoryId();
+        String categoryName = user.getCategoryId().getName();
 
-        IntroductionResponse introductionResponse = introductionService.getIntroduction();
+        GroupCategoryResponse category = new GroupCategoryResponse(categoryId, categoryName);
 
-        // 나머지 코드...
+        IntroductionResponse introductionResponse = introductionService.getIntroduction(user);
 
-        // Even if the user location and category are missing,
-        // return the other user data:
         return new UserInfoResponse(
                 user.getUserId(),
                 user.getNickname(),
                 user.getEmail(),
                 user.getImage(),
                 locationResponse,
-                groupCategoryResponse,
+                category,
                 introductionResponse
         );
     }
-
     public UserEditResponse editUserInfo(Long userId, UserEditRequest userEditRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("회원 정보를 찾을 수 없습니다."));
