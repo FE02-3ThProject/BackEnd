@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,18 +26,10 @@ public class UserGroupTable {
     @Column(name = "group_name")
     private String groupName;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User bookmarkedBy;
 
-    // 그룹에 참여한 사용자 목록
-    @ManyToMany(mappedBy = "joinGroups")
-    private Set<User> members = new HashSet<>();
 
-
-    // 북마크한 사용자 목록
-    @ManyToMany
-    @JoinTable(
-            name = "user_group_bookmark",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> bookmarkedBy = new HashSet<>();
 }
+

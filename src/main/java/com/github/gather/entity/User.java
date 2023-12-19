@@ -3,13 +3,11 @@ package com.github.gather.entity;
 import com.github.gather.dto.response.GroupCategoryResponse;
 import com.github.gather.entity.Role.UserRole;
 import lombok.*;
+import org.apache.catalina.Group;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +17,7 @@ import java.util.Set;
 @Builder
 @Table(name = "user")
 public class User implements UserDetails {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +31,9 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "favorite_category")
     private Category categoryId;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserGroup> userGroups = new ArrayList<>();
 
     @Column(name = "email")
     private String email;
@@ -61,6 +63,7 @@ public class User implements UserDetails {
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+    private String introduction;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -105,10 +108,21 @@ public class User implements UserDetails {
 
 
     // 북마크한 그룹 목록
-    @ManyToMany(mappedBy = "bookmarkedBy")
-    @Builder.Default
-    private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
-
+    @OneToMany(mappedBy = "bookmarkedBy")
+    private Set<UserGroupTable> bookmarkedGroups;
 
 }
+
+
+
+//    private String introduction;
+//
+//    public String getIntroduction() {
+//        return this.introduction;
+//    }
+//
+//    public void setIntroduction(String introduction) {
+//        this.introduction = introduction;
+//    }
+
 

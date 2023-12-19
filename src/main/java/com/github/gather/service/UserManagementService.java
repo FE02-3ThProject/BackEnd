@@ -2,11 +2,9 @@ package com.github.gather.service;
 
 import com.github.gather.dto.request.UserEditRequest;
 import com.github.gather.dto.response.*;
-import com.github.gather.entity.Category;
 import com.github.gather.entity.User;
 import com.github.gather.exception.UserNotFoundException;
 import com.github.gather.repositroy.UserEditRepository;
-import com.github.gather.repositroy.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,7 @@ public class UserManagementService {
 
 
     private final UserEditRepository userRepository;
-    private final IntroductionService introductionService; // IntroductionService 주입 추가
+    private final IntroductionService introductionService;
     private final PasswordEncoder passwordEncoder;
 
     public UserInfoResponse getUserInfo(String email) throws UserNotFoundException {
