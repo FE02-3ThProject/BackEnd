@@ -41,6 +41,7 @@ public class UserService {
     private final CategoryRepository categoryRepository;
     private final ProfileImageRepository profileImageRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public User signup(UserSignupRequest userData) {
         if (!checkUser(userData.getEmail())) {
@@ -238,6 +239,13 @@ public class UserService {
 
         return groupMembers.stream()
                 .map(groupMember -> new JoinGroupDto(groupMember.getGroupId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<JoinGroupDto> getBookmarkedGroups(User user) {
+        List<Bookmark> bookmarks = bookmarkRepository.findByUserId(user);
+        return bookmarks.stream()
+                .map(bookmark -> new JoinGroupDto(bookmark.getGroupId()))
                 .collect(Collectors.toList());
     }
 }
