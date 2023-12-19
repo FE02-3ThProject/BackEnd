@@ -9,16 +9,17 @@ import com.github.gather.service.group.GroupServiceImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GroupJoinService {
+public class GroupMembershipService {
 
     private final GroupServiceImpl groupService;
     private final GroupMemberRepository groupMemberRepository;
 
-    public GroupJoinService(GroupServiceImpl groupService, GroupMemberRepository groupMemberRepository){
+    public GroupMembershipService(GroupServiceImpl groupService, GroupMemberRepository groupMemberRepository){
         this.groupService = groupService;
         this.groupMemberRepository = groupMemberRepository;
     }
 
+    // 모임 가입
     public void joinGroup(Long groupId, User user) {
         GroupTable group = groupService.getGroupById(groupId);
 
@@ -35,5 +36,14 @@ public class GroupJoinService {
         GroupMember newMember = new GroupMember(user, group, GroupMemberRole.MEMBER);
         groupMemberRepository.save(newMember);
     }
-}
 
+    // 모임 탈퇴
+    public void leaveGroup(Long groupId, User user) {
+        GroupTable group = groupService.getGroupById(groupId);
+
+        GroupMember member = groupMemberRepository.findByGroupIdAndUserId(group, user)
+                .orElseThrow(() -> new IllegalArgumentException("그룹의 멤버가 아닙니다."));
+
+        groupMemberRepository.delete(member);
+    }
+}
