@@ -1,5 +1,6 @@
 package com.github.gather.service;
 
+import com.github.gather.dto.JoinGroupDto;
 import com.github.gather.dto.UserInfoDto;
 import com.github.gather.dto.request.UserLoginRequest;
 import com.github.gather.dto.request.UserSignupRequest;
@@ -7,6 +8,7 @@ import com.github.gather.dto.response.UserLoginResponse;
 import com.github.gather.entity.*;
 import com.github.gather.entity.Role.UserRole;
 import com.github.gather.repositroy.*;
+import com.github.gather.repositroy.group.GroupMemberRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,6 +40,7 @@ public class UserService {
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
     private final ProfileImageRepository profileImageRepository;
+    private final GroupMemberRepository groupMemberRepository;
 
     public User signup(UserSignupRequest userData) {
         if (!checkUser(userData.getEmail())) {
@@ -229,4 +233,11 @@ public class UserService {
     }
 
 
+    public List<JoinGroupDto> getJoinedGroups(User user) {
+        List<GroupMember> groupMembers = groupMemberRepository.findByUserId(user);
+
+        return groupMembers.stream()
+                .map(groupMember -> new JoinGroupDto(groupMember.getGroupId()))
+                .collect(Collectors.toList());
+    }
 }

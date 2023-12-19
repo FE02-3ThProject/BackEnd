@@ -1,5 +1,6 @@
 package com.github.gather.repositroy.group;
 
+import com.github.gather.dto.JoinGroupDto;
 import com.github.gather.entity.GroupMember;
 import com.github.gather.entity.GroupTable;
 import com.github.gather.entity.User;
@@ -36,4 +37,6 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember,Long> {
     Long countByGroupId(GroupTable group);
 
     Optional<GroupMember> findByGroupIdAndUserId(GroupTable group, User currentUser);
+
+    List<GroupMember> findByUserId(User user);
 }
