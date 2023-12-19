@@ -17,5 +17,4 @@ public class UserSignupRequest {
     private Long categoryId;
     private String password;
     private String nickname;
-    private String image;
 }
