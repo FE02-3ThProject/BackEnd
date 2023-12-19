@@ -99,12 +99,18 @@ public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
 
     // 가입한 모임 조회
     @GetMapping("/joined")
-    public ResponseEntity<List<JoinGroupDto>> getJoinedGroups(HttpServletRequest request) {
+    public ResponseEntity<List<JoinGroupDto>> JoinedGroups(HttpServletRequest request) {
         User user = authService.checkToken(request);
         List<JoinGroupDto> joinedGroups = userService.getJoinedGroups(user);
         return ResponseEntity.ok(joinedGroups);
     }
 
+    @GetMapping("/bookmarked")
+    public ResponseEntity<List<JoinGroupDto>> BookmarkedGroups(HttpServletRequest request){
+        User user = authService.checkToken(request);
+        List<JoinGroupDto> bookMarkedGroups = userService.getBookmarkedGroups(user);
+        return ResponseEntity.ok(bookMarkedGroups);
+    }
 
 
 }
