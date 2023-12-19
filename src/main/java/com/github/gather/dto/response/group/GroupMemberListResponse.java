@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupMemberListResponse {
 
+    private Long userId;
     private String email;
     private String nickname;
     private String image;

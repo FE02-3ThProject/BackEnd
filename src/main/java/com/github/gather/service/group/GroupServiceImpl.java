@@ -192,6 +192,7 @@ public class GroupServiceImpl implements GroupService {
         List<GroupMember> groupMembers = groupMemberRepository.findGroupMemebersByGroupId(groupId);
         for(GroupMember foundGroupMember : groupMembers){
             GroupMemberListResponse groupMember = GroupMemberListResponse.builder()
+                    .userId(foundGroupMember.getUserId().getUserId())
                     .email(foundGroupMember.getUserId().getEmail())
                     .nickname(foundGroupMember.getUserId().getNickname())
                     .image(foundGroupMember.getUserId().getImage())
