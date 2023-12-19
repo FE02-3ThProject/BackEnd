@@ -30,7 +30,7 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
         }
         String userEmail = jwtTokenProvider.getUserEmail(token);
-        return userRepository.findByEmail(userEmail)
+        return userRepository.findByEmailAndIsDeletedFalse(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("이메일을 찾을 수 없습니다."));
     }
     public User getUser(Principal principal) {
@@ -38,6 +38,6 @@ public class AuthService {
             throw new ErrorException("인증되지 않은 유저입니다.");
         }
         String email = principal.getName();
-        return userRepository.findByEmail(email).orElseThrow(() -> new ErrorException("User not found"));
+        return userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(() -> new ErrorException("User not found"));
     }
 }

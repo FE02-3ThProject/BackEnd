@@ -61,6 +61,7 @@ public class UserService {
                 .build();
     }
 
+
     public UserLoginResponse login(UserLoginRequest user) {
         User loginUser = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("이메일을 다시 확인해주세요."));
@@ -122,7 +123,7 @@ public class UserService {
     }
 
     public Boolean checkUser(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmailAndIsDeletedFalse(email);
         return user.isEmpty();
     }
 

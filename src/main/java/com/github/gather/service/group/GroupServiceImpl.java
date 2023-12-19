@@ -222,7 +222,7 @@ public class GroupServiceImpl implements GroupService {
 
     //유저 email로 해당 유저 찾기
     public User getUserByEmail(String userEmail) {
-        Optional<User> foundUserOpt = userRepository.findByEmail(userEmail);
+        Optional<User> foundUserOpt = userRepository.findByEmailAndIsDeletedFalse(userEmail);
         if (foundUserOpt.isPresent()) {
             user = foundUserOpt.get();
             return user;
