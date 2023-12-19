@@ -4,9 +4,7 @@ import com.github.gather.dto.UserInfoDto;
 import com.github.gather.dto.request.UserLoginRequest;
 import com.github.gather.dto.request.UserSignupRequest;
 import com.github.gather.dto.response.UserLoginResponse;
-import com.github.gather.entity.Category;
-import com.github.gather.entity.Location;
-import com.github.gather.entity.RefreshToken;
+import com.github.gather.entity.*;
 import com.github.gather.entity.Role.UserRole;
 import com.github.gather.repositroy.*;
 import com.github.gather.security.JwtTokenProvider;
@@ -19,11 +17,12 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.github.gather.entity.User;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -37,6 +36,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final LocationRepository locationRepository;
     private final CategoryRepository categoryRepository;
+    private final ProfileImageRepository profileImageRepository;
 
     public User signup(UserSignupRequest userData) {
         if (!checkUser(userData.getEmail())) {
@@ -55,7 +55,7 @@ public class UserService {
                 .locationId(location)
                 .categoryId(category)
                 .nickname(userData.getNickname())
-                .image(userData.getImage())
+                .image(getRandomProfileImage().getProfileUrl())
                 .userRole(UserRole.USER)
                 .isDeleted(false)
                 .isLocked(false)
@@ -219,4 +219,14 @@ public class UserService {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 카테고리를 찾을 수 없습니다."));
     }
+
+    private ProfileImage getRandomProfileImage(){
+        List<ProfileImage> allProfileImages = profileImageRepository.findAll();
+
+        Random random = new Random();
+        int randomIdx = random.nextInt(allProfileImages.size());
+        return allProfileImages.get(randomIdx);
+    }
+
+
 }
