@@ -17,4 +17,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken,Long>
     Optional<RefreshToken> findFirstByUserOrderByExpiryDateDesc(User user);
 
 
+
+    Optional<RefreshToken> findFirstByUser_UserIdOrderByExpiryDateDesc(Long userId);
 }
