@@ -58,6 +58,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/Web.html").permitAll()
                 .antMatchers("/Web.js").permitAll()
                 .antMatchers("/error").permitAll()
+                .antMatchers("/api/group/{groupId}/transferLeader/{newLeaderId}").authenticated()
+                .antMatchers("/api/group/{groupId}/kick/{userId}").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
