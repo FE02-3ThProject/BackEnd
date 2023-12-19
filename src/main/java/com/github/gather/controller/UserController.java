@@ -50,26 +50,6 @@ public class UserController {
     }
 
 
-
-
-//    @PostMapping("/login")
-//    public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
-//        UserLoginResponse loginUser = userService.login(user);
-//        Map<String, String> response = new HashMap<>();
-//        response.put("email", loginUser.getEmail());
-//        response.put("nickname", loginUser.getNickname());
-//        response.put("userRole", loginUser.getUserRole().name());
-//        response.put("location", loginUser.getLocation().getName());
-//        response.put("image", loginUser.getImage());
-//        //TODO : 카테고리 자기소개
-//
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setBearerAuth(loginUser.getAccessToken());
-//        headers.add("Refresh-Token", loginUser.getRefreshToken());
-//
-//        return ResponseEntity.status(200).headers(headers).body(response);
-//    }
 @PostMapping("/login")
 public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
     try {
