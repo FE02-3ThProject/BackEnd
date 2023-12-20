@@ -44,7 +44,9 @@ public class JwtTokenProvider {
 
 //    // 토큰 유효시간 168 시간(7일)
 //    private long tokenValidTime = 1440 * 60 * 7 * 1000L;
-    private long accessTokenValidTime = 30 * 60 * 1000L; // 30분
+//    private long accessTokenValidTime = 30 * 60 * 1000L; // 30분
+    private long accessTokenValidTime = 1 * 60 * 1000L; // 1분
+
 
     // 토큰 유효시간 7일
     private long refreshTokenValidTime = 7 * 24 * 60 * 60 * 1000L; // 7일
@@ -189,7 +191,7 @@ public class JwtTokenProvider {
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         // 사용자의 RefreshToken 조회
-        RefreshToken storedRefreshToken = refreshTokenRepository.findByUser(user)
+        RefreshToken storedRefreshToken = refreshTokenRepository.findFirstByUserOrderByExpiryDateDesc(user)
                 .orElseThrow(() -> new BadCredentialsException("RefreshToken이 존재하지 않습니다."));
 
         // 저장된 RefreshToken과 요청된 RefreshToken이 일치하는지 검사

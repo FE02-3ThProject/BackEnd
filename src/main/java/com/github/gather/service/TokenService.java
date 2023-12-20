@@ -26,13 +26,13 @@ public class TokenService {
 
     public String refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String token = jwtTokenProvider.resolveToken(request);
-        Long userId = jwtTokenProvider.findUserIdBytoken(token);
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findFirstByUser_UserIdOrderByExpiryDateDesc(userId);
-        String refreshToken = optionalRefreshToken.map(RefreshToken::getToken).orElse(null);
+//        Long userId = jwtTokenProvider.findUserIdBytoken(token);
+//        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findFirstByUser_UserIdOrderByExpiryDateDesc(userId);
+//        String refreshToken = optionalRefreshToken.map(RefreshToken::getToken).orElse(null);
 
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
-            String newAccessToken = jwtTokenProvider.refreshAccessToken(refreshToken);
+            String newAccessToken = jwtTokenProvider.refreshAccessToken(token);
 
             Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
             String userEmail = jwtTokenProvider.getUserPk(token);
