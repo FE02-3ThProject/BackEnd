@@ -70,7 +70,7 @@ public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(loginUser.getAccessToken());
-        headers.add("Refresh-Token", loginUser.getRefreshToken());
+        headers.add("refreshtoken", loginUser.getRefreshToken());
 
         return ResponseEntity.status(200).headers(headers).body(response);
     } catch (Exception e) {

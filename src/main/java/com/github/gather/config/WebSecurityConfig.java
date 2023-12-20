@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/user/**").permitAll()
                 .antMatchers("/api/group/**").permitAll()
+                .antMatchers("/api/newToken").permitAll()
                 .antMatchers("/api/user-group").permitAll()
                 .antMatchers("/chat").permitAll()
                 .antMatchers("/api/bookmark").permitAll()
