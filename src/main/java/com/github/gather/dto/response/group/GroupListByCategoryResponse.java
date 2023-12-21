@@ -23,5 +23,6 @@ public class GroupListByCategoryResponse {
     private Integer maxMembers;
     private LocalDate createdAt;
     private Long joinedGroupMembers;
+    private String leaderEmail;
 
 }

@@ -183,7 +183,12 @@ public class GroupServiceImpl implements GroupService {
 
         List<GroupTable> allGroups = groupRepository.searchAllGroups();
         for (GroupTable groupTable : allGroups) {
+
             Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
+            //그룹 리더의 이메일 찾아오기
+            GroupMember groupLeader = groupMemberRepository.findGroupMemberByRoleLeader(groupTable.getGroupId());
+            String leaderEmail = groupLeader.getUserId().getEmail();
+
             GroupListResponse group = GroupListResponse.builder()
                     .groupId(groupTable.getGroupId())
                     .locationName(groupTable.getLocationId().getName())
@@ -194,6 +199,7 @@ public class GroupServiceImpl implements GroupService {
                     .maxMembers(groupTable.getMaxMembers())
                     .createdAt(groupTable.getCreatedAt())
                     .joinedGroupMembers(countedGroupMembers)
+                    .leaderEmail(leaderEmail)
                     .build();
             groupList.add(group);
         }
@@ -270,7 +276,12 @@ public class GroupServiceImpl implements GroupService {
 
         if (groupListByCategoryId != null) {
             for (GroupTable groupTable : groupListByCategoryId) {
+
                 Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
+                //그룹 리더의 이메일 찾아오기
+                GroupMember groupLeader = groupMemberRepository.findGroupMemberByRoleLeader(groupTable.getGroupId());
+                String leaderEmail = groupLeader.getUserId().getEmail();
+
                 GroupListByCategoryResponse group = GroupListByCategoryResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -281,6 +292,7 @@ public class GroupServiceImpl implements GroupService {
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
                         .joinedGroupMembers(countedGroupMembers)
+                        .leaderEmail(leaderEmail)
                         .build();
                 groupList.add(group);
             }
@@ -299,7 +311,12 @@ public class GroupServiceImpl implements GroupService {
         List<GroupTable> groupListByLocationId = groupRepository.findByLocationId(locationId);
         if (groupListByLocationId != null) {
             for (GroupTable groupTable : groupListByLocationId) {
+
                 Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
+                //그룹 리더의 이메일 찾아오기
+                GroupMember groupLeader = groupMemberRepository.findGroupMemberByRoleLeader(groupTable.getGroupId());
+                String leaderEmail = groupLeader.getUserId().getEmail();
+
                 GroupListByLocationResponse group = GroupListByLocationResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -310,6 +327,7 @@ public class GroupServiceImpl implements GroupService {
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
                         .joinedGroupMembers(countedGroupMembers)
+                        .leaderEmail(leaderEmail)
                         .build();
                 groupList.add(group);
             }
@@ -328,7 +346,12 @@ public class GroupServiceImpl implements GroupService {
 
         if (groupListByTitle != null) {
             for (GroupTable groupTable : groupListByTitle) {
+
                 Long countedGroupMembers = groupMemberRepository.countGroupJoinedMembers(groupTable.getGroupId());
+                //그룹 리더의 이메일 찾아오기
+                GroupMember groupLeader = groupMemberRepository.findGroupMemberByRoleLeader(groupTable.getGroupId());
+                String leaderEmail = groupLeader.getUserId().getEmail();
+
                 GroupListByTitleResponse group = GroupListByTitleResponse.builder()
                         .groupId(groupTable.getGroupId())
                         .locationName(groupTable.getLocationId().getName())
@@ -339,6 +362,7 @@ public class GroupServiceImpl implements GroupService {
                         .maxMembers(groupTable.getMaxMembers())
                         .createdAt(groupTable.getCreatedAt())
                         .joinedGroupMembers(countedGroupMembers)
+                        .leaderEmail(leaderEmail)
                         .build();
                 groupList.add(group);
             }
