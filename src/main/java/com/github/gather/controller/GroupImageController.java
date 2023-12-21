@@ -1,3 +1,4 @@
+/*
 package com.github.gather.controller;
 
 import com.github.gather.dto.request.group.CreateGroupRequest;
@@ -61,7 +62,7 @@ public class GroupImageController {
                     .createdAt(LocalDate.now())
                     .build();
 
-            groupService.createGroup(userPrincipal.getName(), newGroupRequest);
+            groupService.createGroup(userPrincipal.getName(), newGroupRequest,file);
 
         } catch (Exception e) {
             // 에러 처리
@@ -118,3 +119,4 @@ public class GroupImageController {
         return ResponseEntity.ok("이미지 업로드 성공");
     }
 }
+*/

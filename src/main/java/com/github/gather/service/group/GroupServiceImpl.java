@@ -6,7 +6,6 @@ import com.github.gather.dto.response.group.*;
 import com.github.gather.entity.*;
 import com.github.gather.entity.Role.GroupMemberRole;
 import com.github.gather.exception.ErrorException;
-import com.github.gather.exception.ExceptionMessage;
 import com.github.gather.exception.group.*;
 import com.github.gather.repositroy.CategoryRepository;
 import com.github.gather.repositroy.ChatRoomRepository;
@@ -17,18 +16,13 @@ import com.github.gather.repositroy.group.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -59,22 +53,16 @@ public class GroupServiceImpl implements GroupService {
 
     // 1. 모임생성
     @Override
-    public CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest, MultipartFile file) throws IOException {
-        Category foundCategory = getCategory(newGroupRequest.getCategoryId());
-        Location foundLocation = getLocation(newGroupRequest.getLocationId());
-        User foundUser = getUserByEmail(userEmail);
+    public CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest, MultipartFile file) {
+        try {
+            Category foundCategory = getCategory(newGroupRequest.getCategoryId());
+            Location foundLocation = getLocation(newGroupRequest.getLocationId());
+            User foundUser = getUserByEmail(userEmail);
 
-
-            // MultipartFile을 java.io.File로 변환
-            File convertFile = new File(file.getOriginalFilename());
-            convertFile.createNewFile();
-            try (FileOutputStream fout = new FileOutputStream(convertFile)) {
-                fout.write(file.getBytes());
-            }
             // 이미지 업로드
             String imageUrl = uploadImage(file);
 
-            //imgUrl(S3 이미지 저장 경로)을 넣어주어야함.
+            // imgUrl(S3 이미지 저장 경로)을 넣어주어야함.
             GroupTable newGroup = new GroupTable(foundCategory, foundLocation, newGroupRequest.getTitle(), imageUrl, newGroupRequest.getDescription(), newGroupRequest.getMaxMembers(), LocalDate.now(), false);
             groupRepository.save(newGroup);
             GroupMember newGroupMember = new GroupMember(foundUser, newGroup, GroupMemberRole.LEADER);
@@ -84,19 +72,67 @@ public class GroupServiceImpl implements GroupService {
             ChatRoom newChatRoom = new ChatRoom(newGroup);
             chatRoomRepository.save(newChatRoom);
 
-
             return CreatedGroupResponse.builder()
                     .group(newGroup)
                     .email(foundUser.getEmail())
                     .role(String.valueOf(newGroupMember.getRole()))
                     .build();
+        } catch (Exception e) {
+            throw new RuntimeException("모임 생성 중 오류가 발생했습니다.");
+        }
+    }
 
+
+    // 2. 모임수정 -- 방장 고유권한
+    @Override
+    public UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfo, MultipartFile newImage) {
+        try {
+            GroupTable foundGroup = getGroup(groupId);
+            Category updatedCategory = getCategory(updateGroupInfo.getCategoryId());
+            Location updatedLocation = getLocation(updateGroupInfo.getLocationId());
+            GroupMember foundGroupMember = groupMemberRepository.findGroupMemberByRoleLeader(foundGroup.getGroupId());
+
+            if (foundGroupMember.getUserId().getEmail().equals(userEmail)) {
+
+                // 이미지가 제공되었다면 업로드하고 imageUrl을 얻어옴
+                String imageUrl = (newImage != null) ? uploadImage(newImage) : foundGroup.getImage();
+
+                foundGroup.updateGroupInfo(
+                        updatedCategory,
+                        updatedLocation,
+                        updateGroupInfo.getTitle(),
+                        updateGroupInfo.getDescription(),
+                        imageUrl, // 수정된 이미지를 업데이트
+                        updateGroupInfo.getMaxMembers(),
+                        foundGroup.getCreatedAt()
+                );
+
+                // 수정한 모임 저장
+                GroupTable updatedGroup = groupRepository.save(foundGroup);
+
+                return UpdatedGroupInfoResponse.builder()
+                        .groupId(updatedGroup.getGroupId())
+                        .categoryId(updatedGroup.getCategoryId().getCategoryId())
+                        .locationId(updatedGroup.getLocationId().getLocationId())
+                        .title(updatedGroup.getTitle())
+                        .image(updatedGroup.getImage())
+                        .description(updatedGroup.getDescription())
+                        .maxMembers(updatedGroup.getMaxMembers())
+                        .createdAt(updatedGroup.getCreatedAt())
+                        .build();
+            } else {
+                throw new MemberNotAllowedException();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("모임 정보 수정 중 오류가 발생했습니다.");
+        }
     }
 
 
     //이미지 업로드
     private String uploadImage(MultipartFile image) {
         try (InputStream inputStream = image.getInputStream()) {
+
             String key = "group/" + image.getOriginalFilename();
             s3Client.putObject(PutObjectRequest.builder()
                     .bucket(bucketName)
@@ -123,42 +159,6 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 그룹이 없습니다."));
     }
 
-    // 2. 모임수정 -- 방장 고유권한
-    @Override
-    public UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfo) {
-
-        GroupTable foundGroup = getGroup(groupId);
-        Category updatedCategory = getCategory(updateGroupInfo.getCategoryId());
-        Location updatedLocation = getLocation(updateGroupInfo.getLocationId());
-        GroupMember foundGroupMember = groupMemberRepository.findGroupMemberByRoleLeader(foundGroup.getGroupId());
-        if (foundGroupMember.getUserId().getEmail().equals(userEmail)) {
-            foundGroup.updateGroupInfo(
-                    updatedCategory,
-                    updatedLocation,
-                    updateGroupInfo.getTitle(),
-                    updateGroupInfo.getDescription(),
-                    updateGroupInfo.getImage(),
-                    updateGroupInfo.getMaxMembers(),
-                    foundGroup.getCreatedAt()
-            );
-
-            //수정한 모임 저장
-            GroupTable updatedGroup = groupRepository.save(foundGroup);
-
-            return UpdatedGroupInfoResponse.builder()
-                    .groupId(updatedGroup.getGroupId())
-                    .categoryId(updatedGroup.getCategoryId().getCategoryId())
-                    .locationId(updatedGroup.getLocationId().getLocationId())
-                    .title(updatedGroup.getTitle())
-                    .image(updatedGroup.getImage())
-                    .description(updatedGroup.getDescription())
-                    .maxMembers(updatedGroup.getMaxMembers())
-                    .createdAt(updatedGroup.getCreatedAt())
-                    .build();
-        } else {
-            throw new MemberNotAllowedException();
-        }
-    }
 
     // 3. 모임 삭제 --방장 고유 권한
     @Override

@@ -15,7 +15,7 @@ public class UpdateGroupInfoRequest {
     private Long locationId; // 1~17 , 도 단위. //location 변경가능
     private String title;
     private String description;
-    private String image;
+    //private String image;
     private Integer maxMembers;
 
 

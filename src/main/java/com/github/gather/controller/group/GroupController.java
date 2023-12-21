@@ -7,13 +7,11 @@ import com.github.gather.exception.group.GroupNotFoundException;
 import com.github.gather.security.JwtTokenProvider;
 import com.github.gather.service.group.GroupServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,26 +23,36 @@ public class GroupController {
 
     //모임생성
     @PostMapping(value = "/create")
-    public ResponseEntity<?> createGroup(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<?> createGroup(@RequestParam("file") MultipartFile image,
                                          @RequestParam("title") String title,
                                          @RequestParam("description") String description,
                                          @RequestParam("maxMembers") Integer maxMembers,
                                          @RequestParam("categoryId") Long categoryId,
-                                         @RequestParam("locationId") Long locationId, HttpServletRequest request) throws IOException {
+                                         @RequestParam("locationId") Long locationId, HttpServletRequest request)  {
         String userToken = jwtTokenProvider.resolveToken(request);
-        String userEmail = jwtTokenProvider.getUserEmail(userToken); //유저이메일인지 확인
+        String userEmail = jwtTokenProvider.getUserEmail(userToken);
 
         CreateGroupRequest newGroupRequest = new CreateGroupRequest(categoryId,locationId,title,description,maxMembers);
 
-        return ResponseEntity.status(200).body(groupService.createGroup(userEmail, newGroupRequest, file));
+        return ResponseEntity.status(200).body(groupService.createGroup(userEmail, newGroupRequest, image));
     }
 
-    //모임수정 -- 방장권한
+    // 모임 수정 -- 방장권한
     @PutMapping(value = "/update/{groupId}")
-    public ResponseEntity<?> modifyGroupInfo(@PathVariable Long groupId, @RequestBody UpdateGroupInfoRequest updateGroupInfoRequest, HttpServletRequest request) {
+    public ResponseEntity<?> modifyGroupInfo(@PathVariable Long groupId,
+                                             @RequestParam(value = "file", required = false) MultipartFile newImage,
+                                             @RequestParam("title") String title,
+                                             @RequestParam("description") String description,
+                                             @RequestParam("maxMembers") Integer maxMembers,
+                                             @RequestParam("categoryId") Long categoryId,
+                                             @RequestParam("locationId") Long locationId,
+                                             HttpServletRequest request) {
         String userToken = jwtTokenProvider.resolveToken(request);
-        String userEmail = jwtTokenProvider.getUserEmail(userToken); //유저이메일인지 확인
-        return ResponseEntity.status(200).body(groupService.modifyGroupInfo(userEmail, groupId, updateGroupInfoRequest));
+        String userEmail = jwtTokenProvider.getUserEmail(userToken);
+
+        UpdateGroupInfoRequest updateGroupInfoRequest = new UpdateGroupInfoRequest(categoryId, locationId, title, description, maxMembers);
+
+        return ResponseEntity.status(200).body(groupService.modifyGroupInfo(userEmail, groupId, updateGroupInfoRequest, newImage));
     }
 
     //모임 삭제 --방장권한
@@ -58,14 +66,14 @@ public class GroupController {
 
     //모임 전체 조회
     @GetMapping(value = "/all")
-    public ResponseEntity<?> searchAllGroups(HttpServletRequest request) {
+    public ResponseEntity<?> searchAllGroups() {
         List<GroupListResponse> allGroups = groupService.searchAllGroups();
         return ResponseEntity.status(200).body(allGroups);
     }
 
     //모임 상세 조회 --없는 groupId면 조회 예외처리
     @GetMapping(value = "/detail/{groupId}")
-    public ResponseEntity<?> getGroupDetail(@PathVariable Long groupId, HttpServletRequest request) {
+    public ResponseEntity<?> getGroupDetail(@PathVariable Long groupId) {
         GroupDetailResponse groupDetail = groupService.getGroupDetail(groupId);
         return ResponseEntity.status(200).body(groupDetail);
     }
@@ -84,7 +92,7 @@ public class GroupController {
 
     //카테고리별 모임 조회 --예외처리 필요
     @GetMapping(value = "/category/{categoryId}")
-    public ResponseEntity<?> searchGroupsByCategoryId(@PathVariable Long categoryId, HttpServletRequest request) {
+    public ResponseEntity<?> searchGroupsByCategoryId(@PathVariable Long categoryId) {
         List<GroupListByCategoryResponse> groupListByCategoryId = groupService.searchGroupsByCategoryId(categoryId);
         return ResponseEntity.status(200).body(groupListByCategoryId);
 
@@ -92,14 +100,14 @@ public class GroupController {
 
     //지역별 모임 조회 --예외처리 필요
     @GetMapping(value = "/location/{locationId}")
-    public ResponseEntity<?> searchGroupsByLocationId(@PathVariable Long locationId, HttpServletRequest request) {
+    public ResponseEntity<?> searchGroupsByLocationId(@PathVariable Long locationId) {
         List<GroupListByLocationResponse> groupListByLocationId = groupService.searchGroupsByLocationId(locationId);
         return ResponseEntity.status(200).body(groupListByLocationId);
     }
 
     //제목으로 모임 조회 --예외처리 필요
     @GetMapping(value = "/title/{title}")
-    public ResponseEntity<?> findByTitleContaining(@PathVariable String title, HttpServletRequest request) {
+    public ResponseEntity<?> findByTitleContaining(@PathVariable String title) {
         List<GroupListByTitleResponse> groupListByTitle = groupService.findByTitleContaining(title);
         return ResponseEntity.status(200).body(groupListByTitle);
     }

@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.util.List;
 
 public interface GroupService {
-    CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest, MultipartFile file) throws IOException;
+    CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest, MultipartFile file) ;
 
 
-    UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfoRequest);
+    UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfoRequest, MultipartFile newImage);
 
     String deleteGroup(String userEmail, Long groupId);
 
