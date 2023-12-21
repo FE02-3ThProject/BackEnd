@@ -5,9 +5,9 @@ import com.github.gather.entity.GroupPost;
 import com.github.gather.entity.GroupTable;
 import com.github.gather.entity.User;
 import com.github.gather.exception.ExceptionMessage;
-import com.github.gather.repositroy.GroupPostRepository;
-import com.github.gather.repositroy.GroupTableRepository;
-import com.github.gather.repositroy.UserRepository;
+import com.github.gather.repository.GroupPostRepository;
+import com.github.gather.repository.GroupTableRepository;
+import com.github.gather.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

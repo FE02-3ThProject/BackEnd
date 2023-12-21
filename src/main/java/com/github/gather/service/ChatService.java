@@ -3,11 +3,11 @@ package com.github.gather.service;
 import com.github.gather.dto.MessageDto;
 import com.github.gather.entity.*;
 import com.github.gather.exception.ErrorException;
-import com.github.gather.repositroy.ChatParticipantRepository;
-import com.github.gather.repositroy.ChatRoomRepository;
-import com.github.gather.repositroy.MessageRepository;
-import com.github.gather.repositroy.UserRepository;
-import com.github.gather.repositroy.group.GroupMemberRepository;
+import com.github.gather.repository.ChatParticipantRepository;
+import com.github.gather.repository.ChatRoomRepository;
+import com.github.gather.repository.MessageRepository;
+import com.github.gather.repository.UserRepository;
+import com.github.gather.repository.group.GroupMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

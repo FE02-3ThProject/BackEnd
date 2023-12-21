@@ -2,7 +2,7 @@ package com.github.gather.service;
 
 import com.github.gather.entity.User;
 import com.github.gather.exception.ErrorException;
-import com.github.gather.repositroy.UserRepository;
+import com.github.gather.repository.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

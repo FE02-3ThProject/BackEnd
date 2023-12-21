@@ -1,4 +1,4 @@
-package com.github.gather.repositroy.group;
+package com.github.gather.repository.group;
 
 import com.github.gather.entity.GroupTable;
 import org.springframework.data.jpa.repository.JpaRepository;

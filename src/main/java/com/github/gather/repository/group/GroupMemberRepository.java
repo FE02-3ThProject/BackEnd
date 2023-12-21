@@ -1,6 +1,5 @@
-package com.github.gather.repositroy.group;
+package com.github.gather.repository.group;
 
-import com.github.gather.dto.JoinGroupDto;
 import com.github.gather.entity.GroupMember;
 import com.github.gather.entity.GroupTable;
 import com.github.gather.entity.User;

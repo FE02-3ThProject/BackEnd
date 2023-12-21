@@ -2,7 +2,7 @@ package com.github.gather.service;
 
 import com.github.gather.entity.GroupTable;
 import com.github.gather.exception.ExceptionMessage;
-import com.github.gather.repositroy.GroupTableRepository;
+import com.github.gather.repository.GroupTableRepository;
 import org.springframework.stereotype.Service;
 
 @Service

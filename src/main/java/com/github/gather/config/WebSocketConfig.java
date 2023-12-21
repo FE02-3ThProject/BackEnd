@@ -2,7 +2,7 @@ package com.github.gather.config;
 
 import com.github.gather.WebSocket.JwtHandshakeInterceptor;
 import com.github.gather.WebSocket.PrincipalStompDecoratorFactory;
-import com.github.gather.repositroy.UserRepository;
+import com.github.gather.repository.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;

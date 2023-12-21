@@ -1,4 +1,4 @@
-package com.github.gather.dto.request;
+package com.github.gather.dto.request.user;
 
 import lombok.*;
 

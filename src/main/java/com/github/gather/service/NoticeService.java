@@ -7,8 +7,8 @@ import com.github.gather.entity.NoticeEntity;
 import com.github.gather.entity.Role.GroupMemberRole;
 import com.github.gather.entity.User;
 import com.github.gather.exception.ExceptionMessage;
-import com.github.gather.repositroy.NoticeRepository;
-import com.github.gather.repositroy.group.GroupMemberRepository;
+import com.github.gather.repository.NoticeRepository;
+import com.github.gather.repository.group.GroupMemberRepository;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

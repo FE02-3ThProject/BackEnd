@@ -4,7 +4,7 @@ import com.github.gather.entity.GroupMember;
 import com.github.gather.entity.GroupTable;
 import com.github.gather.entity.Role.GroupMemberRole;
 import com.github.gather.entity.User;
-import com.github.gather.repositroy.group.GroupMemberRepository;
+import com.github.gather.repository.group.GroupMemberRepository;
 import com.github.gather.service.group.GroupServiceImpl;
 import org.springframework.stereotype.Service;
 

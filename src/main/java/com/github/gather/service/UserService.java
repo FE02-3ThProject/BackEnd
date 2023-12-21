@@ -2,13 +2,15 @@ package com.github.gather.service;
 
 import com.github.gather.dto.JoinGroupDto;
 import com.github.gather.dto.UserInfoDto;
-import com.github.gather.dto.request.UserLoginRequest;
-import com.github.gather.dto.request.UserSignupRequest;
-import com.github.gather.dto.response.UserLoginResponse;
+import com.github.gather.dto.request.user.UserLoginRequest;
+import com.github.gather.dto.request.user.UserSignupRequest;
+import com.github.gather.dto.response.user.UserInfoResponse;
+import com.github.gather.dto.response.user.UserLoginResponse;
 import com.github.gather.entity.*;
 import com.github.gather.entity.Role.UserRole;
-import com.github.gather.repositroy.*;
-import com.github.gather.repositroy.group.GroupMemberRepository;
+import com.github.gather.exception.UserNotFoundException;
+import com.github.gather.repository.*;
+import com.github.gather.repository.group.GroupMemberRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -233,6 +235,12 @@ public class UserService {
         return allProfileImages.get(randomIdx);
     }
 
+    public UserInfoResponse getUserInfo(String email) {
+        User user = userRepository.findByEmailAndIsDeletedFalse(email)
+                .orElseThrow(() -> new UserNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        return new UserInfoResponse(user.getUserId(), user.getNickname(), user.getEmail(),  user.getImage(), user.getLocationId(),user.getCategoryId(),user.getIntroduction());
+    }
 
     public List<JoinGroupDto> getJoinedGroups(User user) {
         List<GroupMember> groupMembers = groupMemberRepository.findByUserId(user);
@@ -248,4 +256,5 @@ public class UserService {
                 .map(bookmark -> new JoinGroupDto(bookmark.getGroupId()))
                 .collect(Collectors.toList());
     }
+
 }

@@ -1,7 +1,5 @@
 package com.github.gather.service;
 
-import com.github.gather.entity.RefreshToken;
-import com.github.gather.repositroy.RefreshTokenRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +11,6 @@ import com.sun.security.auth.UserPrincipal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,15 +18,9 @@ import java.util.Optional;
 public class TokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-
 
     public String refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String token = jwtTokenProvider.resolveToken(request);
-//        Long userId = jwtTokenProvider.findUserIdBytoken(token);
-//        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findFirstByUser_UserIdOrderByExpiryDateDesc(userId);
-//        String refreshToken = optionalRefreshToken.map(RefreshToken::getToken).orElse(null);
-
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
             String newAccessToken = jwtTokenProvider.refreshAccessToken(token);

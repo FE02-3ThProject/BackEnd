@@ -3,7 +3,7 @@ package com.github.gather.service;
 import com.github.gather.entity.Bookmark;
 import com.github.gather.entity.GroupTable;
 import com.github.gather.entity.User;
-import com.github.gather.repositroy.BookmarkRepository;
+import com.github.gather.repository.BookmarkRepository;
 import org.springframework.stereotype.Service;
 
 @Service
