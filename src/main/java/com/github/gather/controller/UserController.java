@@ -14,6 +14,8 @@ import com.github.gather.security.JwtTokenProvider;
 import com.github.gather.service.AuthService;
 import com.github.gather.service.S3Service;
 import com.github.gather.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,9 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+@Tag(name = "User",description = "회원 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -43,7 +48,7 @@ public class UserController {
     private final AuthService authService;
     private final S3Service s3Service;
 
-
+    @Operation(summary = "회원 가입" , description = "회원 가입을 진행합니다.")
     @PostMapping(value = "/signup")
     public ResponseEntity<?> userSignup(@RequestBody UserSignupRequest user) {
         User newUser = userService.signup(user);
