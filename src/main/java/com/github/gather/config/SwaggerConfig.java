@@ -18,8 +18,8 @@ public class SwaggerConfig {
 
     private Info apiInfo(){
         return new Info()
-                .title("프로젝트")
-                .description("프로젝트 Swagger UI 테스트")
+                .title("moim-moim 프로젝트")
+                .description("moim-moim Swagger")
                 .version("1.0.0");
     }
 

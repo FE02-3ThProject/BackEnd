@@ -15,6 +15,9 @@ import com.github.gather.service.AuthService;
 import com.github.gather.service.S3Service;
 import com.github.gather.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +52,11 @@ public class UserController {
     private final S3Service s3Service;
 
     @Operation(summary = "회원 가입" , description = "회원 가입을 진행합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 가입 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PostMapping(value = "/signup")
     public ResponseEntity<?> userSignup(@RequestBody UserSignupRequest user) {
         User newUser = userService.signup(user);
@@ -56,19 +64,28 @@ public class UserController {
         return ResponseEntity.status(200).body(newUser);
     }
 
-
+    @Operation(summary = "이메일 중복 체크",description = "이메일 중복 체크를 진행합니다.")
     @GetMapping("/{email}/existsEmail")
-    public ResponseEntity<Boolean> checkEmail(@PathVariable String email){
+    public ResponseEntity<Boolean> checkEmail(
+            @Parameter(description = "체크할 이메일", required = true)
+            @PathVariable String email){
         return ResponseEntity.ok(userService.checkEmail(email));
     }
 
-
+    @Operation(summary = "닉네임 중복 체크",description = "닉네임 중복 체크를 진행합니다.")
     @GetMapping("/{nickname}/existsNickname")
-    public ResponseEntity<Boolean> checkNickname(@PathVariable String nickname){
+    public ResponseEntity<Boolean> checkNickname(
+            @Parameter(description = "체크할 닉네임", required = true)
+            @PathVariable String nickname){
         return ResponseEntity.ok(userService.checkNickname(nickname));
     }
 
-
+    @Operation(summary = "로그인" , description = "로그인을 진행합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> userLogin(@RequestBody UserLoginRequest user) {
         try {
@@ -79,7 +96,6 @@ public class UserController {
             response.put("userRole", loginUser.getUserRole().name());
             response.put("location", loginUser.getLocation().getName());
             response.put("image", loginUser.getImage());
-            //TODO: 카테고리 자기소개
 
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(loginUser.getAccessToken());
@@ -92,7 +108,12 @@ public class UserController {
         }
     }
 
-
+    @Operation(summary = "로그아웃" , description = "로그아웃을 진행합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PostMapping("/logout")
     public ResponseEntity<?> userLogout(HttpServletRequest request) {
         String token = jwtTokenProvider.resolveToken(request);
@@ -101,7 +122,12 @@ public class UserController {
         return ResponseEntity.ok("로그아웃 성공");
     }
 
-
+    @Operation(summary = "회원탈퇴" , description = "회원탈퇴를 진행합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원탈퇴 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @DeleteMapping("/userDelete")
     public ResponseEntity<?> userDelete(HttpServletRequest request){
         String token = jwtTokenProvider.resolveToken(request);
@@ -110,6 +136,13 @@ public class UserController {
         return ResponseEntity.ok("회원 탈퇴 성공");
     }
 
+
+    @Operation(summary = "유저정보" , description = "유저정보를 불러옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "유저정보 요청 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/info")
     public ResponseEntity<UserInfoResponse> getUserInfo(@RequestParam String email) {
         try {
@@ -120,7 +153,12 @@ public class UserController {
         }
     }
 
-    // 가입한 모임 조회
+    @Operation(summary = "가입한 모임" , description = "가입한 모임들을 불러옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가입한 모임 요청 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/joined")
     public ResponseEntity<List<JoinGroupDto>> JoinedGroups(HttpServletRequest request) {
         User user = authService.checkToken(request);
@@ -128,6 +166,12 @@ public class UserController {
         return ResponseEntity.ok(joinedGroups);
     }
 
+    @Operation(summary = "즐겨찾기한 모임" , description = "즐겨찾기한 모임들을 불러옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "즐겨찾기한 모임 요청 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/bookmarked")
     public ResponseEntity<List<JoinGroupDto>> BookmarkedGroups(HttpServletRequest request){
         User user = authService.checkToken(request);
@@ -135,6 +179,12 @@ public class UserController {
         return ResponseEntity.ok(bookMarkedGroups);
     }
 
+    @Operation(summary = "회원정보 수정" , description = "회원 정보를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PutMapping("/info")
     public ResponseEntity<UserInfoDto> updateUserInfo(
             @RequestParam("nickname") String nickname,
