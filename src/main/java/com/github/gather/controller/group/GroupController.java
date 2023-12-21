@@ -78,7 +78,7 @@ public class GroupController {
         return ResponseEntity.status(200).body(groupDetail);
     }
 
-    //모임 멤버 조회 -- 모임에 가입한 유저만?
+    //모임 멤버 조회 -- 모임에 가입한 유저만
     @GetMapping(value = "/groupMembers/{groupId}")
     public ResponseEntity<?> findGroupMemebers(@PathVariable Long groupId, HttpServletRequest request) {
         String userToken = jwtTokenProvider.resolveToken(request);

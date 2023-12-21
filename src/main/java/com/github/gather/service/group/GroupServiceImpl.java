@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -133,7 +134,8 @@ public class GroupServiceImpl implements GroupService {
     private String uploadImage(MultipartFile image) {
         try (InputStream inputStream = image.getInputStream()) {
 
-            String key = "group/" + image.getOriginalFilename();
+            //String key = "group/" + image.getOriginalFilename();
+            String key = "groups/" + UUID.randomUUID().toString() + "_" + image.getOriginalFilename(); //랜덤한 고유번호 생성 추가. (동일한 )
             s3Client.putObject(PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
