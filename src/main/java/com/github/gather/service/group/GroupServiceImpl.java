@@ -6,6 +6,7 @@ import com.github.gather.dto.response.group.*;
 import com.github.gather.entity.*;
 import com.github.gather.entity.Role.GroupMemberRole;
 import com.github.gather.exception.ErrorException;
+import com.github.gather.exception.ExceptionMessage;
 import com.github.gather.exception.group.*;
 import com.github.gather.repositroy.CategoryRepository;
 import com.github.gather.repositroy.ChatRoomRepository;
@@ -15,9 +16,21 @@ import com.github.gather.repositroy.group.GroupMemberRepository;
 import com.github.gather.repositroy.group.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,33 +47,75 @@ public class GroupServiceImpl implements GroupService {
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final S3Client s3Client;
 
     User user;
     Location location;
     Category category;
 
+    @Value("${security.s3.bucketName}")
+    private String bucketName;
+
+
     // 1. 모임생성
     @Override
-    public CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest) {
+    public CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest, MultipartFile file) throws IOException {
         Category foundCategory = getCategory(newGroupRequest.getCategoryId());
         Location foundLocation = getLocation(newGroupRequest.getLocationId());
         User foundUser = getUserByEmail(userEmail);
-        GroupTable newGroup = new GroupTable(foundCategory, foundLocation, newGroupRequest.getTitle(), newGroupRequest.getImage(), newGroupRequest.getDescription(), newGroupRequest.getMaxMembers(), LocalDate.now(), false);
-        groupRepository.save(newGroup);
-        GroupMember newGroupMember = new GroupMember(foundUser, newGroup, GroupMemberRole.LEADER);
-        groupMemberRepository.save(newGroupMember);
-
-        // 채팅방 생성
-        ChatRoom newChatRoom = new ChatRoom(newGroup);
-        chatRoomRepository.save(newChatRoom);
 
 
-        return CreatedGroupResponse.builder()
-                .group(newGroup)
-                .email(foundUser.getEmail())
-                .role(String.valueOf(newGroupMember.getRole()))
-                .build();
+            // MultipartFile을 java.io.File로 변환
+            File convertFile = new File(file.getOriginalFilename());
+            convertFile.createNewFile();
+            try (FileOutputStream fout = new FileOutputStream(convertFile)) {
+                fout.write(file.getBytes());
+            }
+            // 이미지 업로드
+            String imageUrl = uploadImage(file);
+
+            //imgUrl(S3 이미지 저장 경로)을 넣어주어야함.
+            GroupTable newGroup = new GroupTable(foundCategory, foundLocation, newGroupRequest.getTitle(), imageUrl, newGroupRequest.getDescription(), newGroupRequest.getMaxMembers(), LocalDate.now(), false);
+            groupRepository.save(newGroup);
+            GroupMember newGroupMember = new GroupMember(foundUser, newGroup, GroupMemberRole.LEADER);
+            groupMemberRepository.save(newGroupMember);
+
+            // 채팅방 생성
+            ChatRoom newChatRoom = new ChatRoom(newGroup);
+            chatRoomRepository.save(newChatRoom);
+
+
+            return CreatedGroupResponse.builder()
+                    .group(newGroup)
+                    .email(foundUser.getEmail())
+                    .role(String.valueOf(newGroupMember.getRole()))
+                    .build();
+
     }
+
+
+    //이미지 업로드
+    private String uploadImage(MultipartFile image) {
+        try (InputStream inputStream = image.getInputStream()) {
+            String key = "group/" + image.getOriginalFilename();
+            s3Client.putObject(PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build(), RequestBody.fromInputStream(inputStream, image.getSize()));
+
+            return generateImageUrl(key);
+        } catch (IOException e) {
+            throw new RuntimeException("Error uploading image: Failed to read image InputStream.", e);
+        } catch (SdkException e) {
+            throw new RuntimeException("Error uploading image: Failed to upload image to S3.", e);
+        }
+    }
+
+    //imageUrl 생성
+    private String generateImageUrl(String key) {
+        return "https://" + bucketName + ".s3.amazonaws.com/" + key;
+    }
+
 
     @Override
     public GroupTable getGroupById(Long id) {
@@ -142,7 +197,7 @@ public class GroupServiceImpl implements GroupService {
                     .build();
             groupList.add(group);
         }
-        return  groupList;
+        return groupList;
     }
 
 
@@ -153,7 +208,7 @@ public class GroupServiceImpl implements GroupService {
         GroupTable existingGroup = groupRepository.findbyGroupId(groupId);
 
         //그룹 리더의 이메일 찾아오기
-        GroupMember groupLeader  = groupMemberRepository.findGroupMemberByRoleLeader(groupId);
+        GroupMember groupLeader = groupMemberRepository.findGroupMemberByRoleLeader(groupId);
         String leaderEmail = groupLeader.getUserId().getEmail();
 
         //그룹에 가입된 총인원수 가져오기
@@ -190,7 +245,7 @@ public class GroupServiceImpl implements GroupService {
         List<GroupMemberListResponse> groupMemberList = new ArrayList<>();
 
         List<GroupMember> groupMembers = groupMemberRepository.findGroupMemebersByGroupId(groupId);
-        for(GroupMember foundGroupMember : groupMembers){
+        for (GroupMember foundGroupMember : groupMembers) {
             GroupMemberListResponse groupMember = GroupMemberListResponse.builder()
                     .userId(foundGroupMember.getUserId().getUserId())
                     .email(foundGroupMember.getUserId().getEmail())
@@ -229,7 +284,7 @@ public class GroupServiceImpl implements GroupService {
                         .build();
                 groupList.add(group);
             }
-            return  groupList;
+            return groupList;
         } else {
             throw new GroupNotFoundException();
         }
@@ -258,8 +313,8 @@ public class GroupServiceImpl implements GroupService {
                         .build();
                 groupList.add(group);
             }
-            return  groupList;
-        } else{
+            return groupList;
+        } else {
             throw new GroupNotFoundException();
         }
     }
@@ -287,7 +342,7 @@ public class GroupServiceImpl implements GroupService {
                         .build();
                 groupList.add(group);
             }
-            return  groupList;
+            return groupList;
         } else {
             throw new GroupNotFoundException();
         }
@@ -336,6 +391,7 @@ public class GroupServiceImpl implements GroupService {
             throw new LocationNotFoundException();
         }
     }
+
 
     // 방장 권한 이전
     @Transactional
@@ -391,5 +447,6 @@ public class GroupServiceImpl implements GroupService {
 
 
 }
+
 
 

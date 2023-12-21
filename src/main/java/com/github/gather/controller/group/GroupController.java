@@ -7,10 +7,13 @@ import com.github.gather.exception.group.GroupNotFoundException;
 import com.github.gather.security.JwtTokenProvider;
 import com.github.gather.service.group.GroupServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,10 +25,18 @@ public class GroupController {
 
     //모임생성
     @PostMapping(value = "/create")
-    public ResponseEntity<?> createGroup(@RequestBody CreateGroupRequest newGroupRequest, HttpServletRequest request) {
+    public ResponseEntity<?> createGroup(@RequestParam("file") MultipartFile file,
+                                         @RequestParam("title") String title,
+                                         @RequestParam("description") String description,
+                                         @RequestParam("maxMembers") Integer maxMembers,
+                                         @RequestParam("categoryId") Long categoryId,
+                                         @RequestParam("locationId") Long locationId, HttpServletRequest request) throws IOException {
         String userToken = jwtTokenProvider.resolveToken(request);
         String userEmail = jwtTokenProvider.getUserEmail(userToken); //유저이메일인지 확인
-        return ResponseEntity.status(200).body(groupService.createGroup(userEmail, newGroupRequest));
+
+        CreateGroupRequest newGroupRequest = new CreateGroupRequest(categoryId,locationId,title,description,maxMembers);
+
+        return ResponseEntity.status(200).body(groupService.createGroup(userEmail, newGroupRequest, file));
     }
 
     //모임수정 -- 방장권한
