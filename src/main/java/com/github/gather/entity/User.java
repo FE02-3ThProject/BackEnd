@@ -68,11 +68,6 @@ public class User implements UserDetails {
     private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
 
 
-
-
-//    @OneToMany(mappedBy = "user")
-//    private List<UserGroup> userGroups;    // UserGroup과 양방향 관계를 맺기 위해 생성
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -103,22 +98,6 @@ public class User implements UserDetails {
         return true;
     }
 
-
-    // 그룹에 참여한 그룹 목록
-    @Builder.Default
-    @ManyToMany
-    @JoinTable(
-            name = "user_group_member",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
-    )
-    private Set<UserGroupTable> joinGroups = new HashSet<>();
-
-
-    // 북마크한 그룹 목록
-    @Builder.Default
-    @ManyToMany(mappedBy = "bookmarkedBy")
-    private Set<UserGroupTable> bookmarkedGroups = new HashSet<>();
 
     public void setLocationId(Location locationId) {
         this.locationId = locationId;

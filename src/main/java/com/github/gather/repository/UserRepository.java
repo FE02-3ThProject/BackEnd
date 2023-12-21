@@ -1,4 +1,4 @@
-package com.github.gather.repositroy;
+package com.github.gather.repository;
 
 
 import com.github.gather.entity.User;
@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Repository

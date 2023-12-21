@@ -1,9 +1,6 @@
-package com.github.gather.dto.request;
+package com.github.gather.dto.request.user;
 
 
-import com.github.gather.entity.Category;
-import com.github.gather.entity.Location;
-import com.github.gather.entity.Role.UserRole;
 import lombok.*;
 
 @Getter

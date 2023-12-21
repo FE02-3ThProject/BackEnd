@@ -4,7 +4,7 @@ import com.github.gather.oauth2.CustomOAuth2User;
 import com.github.gather.entity.User;
 import com.github.gather.oauth2.OAuthAttributes;
 import com.github.gather.oauth2.SocialType;
-import com.github.gather.repositroy.UserRepository;
+import com.github.gather.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

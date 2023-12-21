@@ -1,7 +1,7 @@
 package com.github.gather.WebSocket;
 
 import com.github.gather.entity.User;
-import com.github.gather.repositroy.UserRepository;
+import com.github.gather.repository.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;

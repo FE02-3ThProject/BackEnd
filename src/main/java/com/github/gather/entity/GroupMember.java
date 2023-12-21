@@ -30,15 +30,6 @@ public class GroupMember {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private GroupMemberRole role;
-
-
-/*    @Builder
-    public GroupMember(Long memberId, User userId, GroupTable groupId, GroupMemberRole role) {
-        this.memberId = memberId;
-        this.userId = userId;
-        this.groupId = groupId;
-        this.role = role;
-    }*/
     
     public GroupMember(User userId, GroupTable groupId, GroupMemberRole role) {
         this.userId = userId;

@@ -1,4 +1,4 @@
-package com.github.gather.repositroy;
+package com.github.gather.repository;
 
 import com.github.gather.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;

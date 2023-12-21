@@ -2,7 +2,6 @@ package com.github.gather.oauth2.handler;
 
 import com.github.gather.entity.Role.UserRole;
 import com.github.gather.oauth2.CustomOAuth2User;
-import com.github.gather.repositroy.UserRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

@@ -1,4 +1,4 @@
-package com.github.gather.dto.response;
+package com.github.gather.dto.response.user;
 
 import com.github.gather.entity.Category;
 import com.github.gather.entity.Location;
