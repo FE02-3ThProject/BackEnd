@@ -42,10 +42,9 @@ public class JwtTokenProvider {
     private String accessHeader = "Authorization";
     private String refreshHeader = "Authorization-refresh";
 
-//    // 토큰 유효시간 168 시간(7일)
-//    private long tokenValidTime = 1440 * 60 * 7 * 1000L;
-//    private long accessTokenValidTime = 30 * 60 * 1000L; // 30분
-    private long accessTokenValidTime = 1 * 60 * 1000L; // 1분
+
+    private long accessTokenValidTime = 30 * 60 * 1000L; // 30분
+
 
 
     // 토큰 유효시간 7일
