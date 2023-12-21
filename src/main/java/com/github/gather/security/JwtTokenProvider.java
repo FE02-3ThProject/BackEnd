@@ -3,15 +3,19 @@ package com.github.gather.security;
 import com.github.gather.entity.RefreshToken;
 import com.github.gather.entity.TokenBlacklist;
 import com.github.gather.entity.User;
-import com.github.gather.repositroy.RefreshTokenRepository;
-import com.github.gather.repositroy.TokenBlacklistRepository;
-import com.github.gather.repositroy.UserRepository;
+import com.github.gather.repository.RefreshTokenRepository;
+import com.github.gather.repository.TokenBlacklistRepository;
+import com.github.gather.repository.UserRepository;
+import com.sun.security.auth.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,9 +25,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Date;
 
+@Getter
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
@@ -33,10 +39,13 @@ public class JwtTokenProvider {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenBlacklistRepository tokenBlacklistRepository;
+    private String accessHeader = "Authorization";
+    private String refreshHeader = "Authorization-refresh";
 
-//    // 토큰 유효시간 168 시간(7일)
-//    private long tokenValidTime = 1440 * 60 * 7 * 1000L;
+
     private long accessTokenValidTime = 30 * 60 * 1000L; // 30분
+
+
 
     // 토큰 유효시간 7일
     private long refreshTokenValidTime = 7 * 24 * 60 * 60 * 1000L; // 7일
@@ -50,20 +59,6 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-//     JWT 토큰 생성 (이메일)
-
-//    public String createToken(User loginUser) {
-//        Claims claims = Jwts.claims().setSubject(loginUser.getEmail());
-//        claims.put("id", loginUser.getUserId());
-//        claims.put("role", loginUser.getUserRole()); // 정보는 key/value 쌍으로 저장됩니다.
-//        Date now = new Date();
-//        return Jwts.builder()
-//                .setClaims(claims) // 정보 저장
-//                .setIssuedAt(now) // 토큰 발행 시간
-//                .setExpiration(new Date(now.getTime() + tokenValidTime)) // 토큰 유효 시간
-//                .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘
-//                .compact();
-//    }
     // Refresh Token 생성
     public String createRefreshToken(User loginUser) {
         Claims claims = Jwts.claims().setSubject(loginUser.getEmail());
@@ -78,7 +73,6 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
-
     // Access Token 생성
     public String createAccessToken(User loginUser) {
         Claims claims = Jwts.claims().setSubject(loginUser.getEmail());
@@ -94,8 +88,27 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String createRefreshTokenOAuth(String email){
+        Claims claims = Jwts.claims().setSubject(email);
+        Date now = new Date();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+    }
 
-
+    public String createAccessTokenOAuth(String email){
+        Claims claims = Jwts.claims().setSubject(email);
+        Date now = new Date();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + accessTokenValidTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+    }
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
@@ -115,6 +128,21 @@ public class JwtTokenProvider {
         return request.getHeader("X-AUTH-TOKEN");
     }
 
+    public String resolveWebSocketToken(ServerHttpRequest request) {
+        if (request instanceof ServletServerHttpRequest) {
+            ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+            return servletRequest.getServletRequest().getParameter("token");
+        }
+        return null;
+    }
+    public UserPrincipal getUserPrincipal(String token) {
+        String userEmail = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return new UserPrincipal(userEmail);
+    }
+
+    public String getUserPk(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
 
     // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String jwtToken) {
@@ -162,7 +190,7 @@ public class JwtTokenProvider {
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         // 사용자의 RefreshToken 조회
-        RefreshToken storedRefreshToken = refreshTokenRepository.findByUser(user)
+        RefreshToken storedRefreshToken = refreshTokenRepository.findFirstByUserOrderByExpiryDateDesc(user)
                 .orElseThrow(() -> new BadCredentialsException("RefreshToken이 존재하지 않습니다."));
 
         // 저장된 RefreshToken과 요청된 RefreshToken이 일치하는지 검사
@@ -187,5 +215,20 @@ public class JwtTokenProvider {
             // (RefreshToken의 경우, 새로 발급하는 시점에서의 만료 시간 갱신 필요)
         }
     }
+
+    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
+        setAccessTokenHeader(response, accessToken);
+        setRefreshTokenHeader(response, refreshToken);
+    }
+
+    public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
+        response.setHeader(accessHeader, accessToken);
+    }
+
+    public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
+        response.setHeader(refreshHeader, refreshToken);
+    }
+
+
 
 }

@@ -1,5 +1,7 @@
 package com.github.gather.security;
 
+import com.sun.security.auth.UserPrincipal;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(request); //Request의 헤더에서 토큰을 불러와서 저장
 
         if (token != null && jwtTokenProvider.validateToken(token)) { //토큰이 유효한지 검사
-            Long userId = jwtTokenProvider.findUserIdBytoken(token);
+
             // AccessToken이 만료되었다면
             if (!jwtTokenProvider.validateToken(token)) {
                 // 여기서 RefreshToken을 사용하여 새로운 AccessToken을 발급받는 로직 추가
@@ -31,6 +33,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 새로운 AccessToken으로 Authentication 객체 생성
                 Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
 
+                // UserPrincipal 생성
+                String userEmail = jwtTokenProvider.getUserPk(token);
+                UserPrincipal userPrincipal = new UserPrincipal(userEmail);
+
+                // UserPrincipal을 Authentication 객체에 추가
+                authentication = new UsernamePasswordAuthenticationToken(
+                        userPrincipal, authentication.getCredentials(), authentication.getAuthorities());
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 // Response 헤더에 새로운 AccessToken을 실어서 보내줄 수 있음
@@ -38,10 +48,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } else {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-            TokenContext.setProfileId(userId);
-        }
 
+                // UserPrincipal 생성
+                String userEmail = jwtTokenProvider.getUserPk(token);
+                UserPrincipal userPrincipal = new UserPrincipal(userEmail);
+
+                // UserPrincipal을 Authentication 객체에 추가
+                authentication = new UsernamePasswordAuthenticationToken(
+                        userPrincipal, authentication.getCredentials(), authentication.getAuthorities());
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            }
+        }
 
         filterChain.doFilter(request, response); //Custom한 필터 등록
     }

@@ -23,10 +23,6 @@ public class Message {
     @JoinColumn(name = "room_id")
     private ChatRoom roomId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(name = "content")
     private String content;
 
@@ -34,12 +30,13 @@ public class Message {
     private Timestamp sendTime;
 
     @ManyToOne
-    @JoinColumn(name = "receive_id")
-    private User receiveId;
+    @JoinColumn(name = "user_id")
+    private User userId;
 
-    @ManyToOne
-    @JoinColumn(name = "send_id")
-    private User senderId;
-
-    // 생성자, 게터, 세터 등 필요한 메서드 추가
+    public Message(ChatRoom roomId, String content, Timestamp sendTime, User userId) {
+        this.roomId = roomId;
+        this.content = content;
+        this.sendTime = sendTime;
+        this.userId = userId;
+    }
 }

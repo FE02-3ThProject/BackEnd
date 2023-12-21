@@ -1,12 +1,16 @@
 package com.github.gather.service;
 
-import com.github.gather.dto.request.UserLoginRequest;
-import com.github.gather.dto.request.UserSignupRequest;
-import com.github.gather.dto.response.UserLoginResponse;
-import com.github.gather.entity.RefreshToken;
-import com.github.gather.repositroy.RefreshTokenRepository;
-import com.github.gather.repositroy.TokenBlacklistRepository;
-import com.github.gather.repositroy.UserRepository;
+import com.github.gather.dto.JoinGroupDto;
+import com.github.gather.dto.UserInfoDto;
+import com.github.gather.dto.request.user.UserLoginRequest;
+import com.github.gather.dto.request.user.UserSignupRequest;
+import com.github.gather.dto.response.user.UserInfoResponse;
+import com.github.gather.dto.response.user.UserLoginResponse;
+import com.github.gather.entity.*;
+import com.github.gather.entity.Role.UserRole;
+import com.github.gather.exception.UserNotFoundException;
+import com.github.gather.repository.*;
+import com.github.gather.repository.group.GroupMemberRepository;
 import com.github.gather.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +21,13 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.github.gather.entity.User;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -32,68 +39,37 @@ public class UserService {
     private final TokenBlacklistRepository tokenBlacklistRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-
+    private final LocationRepository locationRepository;
+    private final CategoryRepository categoryRepository;
+    private final ProfileImageRepository profileImageRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public User signup(UserSignupRequest userData) {
         if (!checkUser(userData.getEmail())) {
             throw new DataIntegrityViolationException("이미 존재하는 이메일입니다.");
         }
+        Long locationId = userData.getLocationId();
+        Long categoryId = userData.getCategoryId();
+
+        Location location = locationRepository.findById(locationId).orElseThrow(()->new RuntimeException("존재 하지 않는 지역입니다."));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()->new RuntimeException("존재 하지 않는 카테고리입니다."));
+
+
         return User.builder()
                 .email(userData.getEmail())
                 .password(passwordEncoder.encode(userData.getPassword()))
-                .locationId(userData.getLocation())
+                .locationId(location)
+                .categoryId(category)
                 .nickname(userData.getNickname())
-                .phoneNumber(userData.getPhoneNumber())
-                .image(userData.getImage())
-                .userRole(userData.getUserRole())
+                .image(getRandomProfileImage().getProfileUrl())
+                .userRole(UserRole.USER)
                 .isDeleted(false)
                 .isLocked(false)
+                .lockCount(0)
                 .build();
     }
 
-//    public UserLoginResponse login(UserLoginRequest user) {
-//
-//        User loginUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
-//                () -> new BadCredentialsException("이메일을 다시 확인해주세요.")
-//        );
-//
-//        if (loginUser.getIsDeleted()) {
-//            throw new LockedException("계정이 비활성화되었습니다.");
-//        }
-//
-//        if (loginUser.getIsLocked()) {
-//            throw new LockedException("계정이 잠겨있습니다.");
-//        }
-//
-//        if (!passwordEncoder.matches(user.getPassword(), loginUser.getPassword())) {
-//            // 비밀번호 오류 처리
-//            loginUser.setLockCount(loginUser.getLockCount() + 1);
-//            if (loginUser.getLockCount() >= 5) {
-//                loginUser.setIsLocked(true);
-//                userRepository.save(loginUser);
-//                throw new LockedException("비밀번호 5회 이상 틀려 계정이 잠겼습니다.");
-//            }
-//            userRepository.save(loginUser);
-//            throw new BadCredentialsException("비밀번호를 다시 확인해주세요.");
-//        }
-//
-//        // 정상 로그인 처리
-//        loginUser.setLockCount(0);
-//        loginUser.setIsLocked(false);
-//        userRepository.save(loginUser);
-//
-//        String newToken = jwtTokenProvider.createToken(loginUser);
-//
-//        return UserLoginResponse.builder()
-//                .email(loginUser.getEmail())
-//                .nickname(loginUser.getNickname())
-//                .phoneNumber(loginUser.getPhoneNumber())
-//                .location(loginUser.getLocationId())
-//                .userRole(loginUser.getUserRole())
-//                .image(loginUser.getImage())
-//                .token(newToken)
-//                .build();
-//    }
 
     public UserLoginResponse login(UserLoginRequest user) {
         User loginUser = userRepository.findByEmail(user.getEmail())
@@ -147,7 +123,6 @@ public class UserService {
         return UserLoginResponse.builder()
                 .email(loginUser.getEmail())
                 .nickname(loginUser.getNickname())
-                .phoneNumber(loginUser.getPhoneNumber())
                 .location(loginUser.getLocationId())
                 .userRole(loginUser.getUserRole())
                 .image(loginUser.getImage())
@@ -157,7 +132,7 @@ public class UserService {
     }
 
     public Boolean checkUser(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmailAndIsDeletedFalse(email);
         return user.isEmpty();
     }
 
@@ -187,7 +162,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
-        RefreshToken storedRefreshToken = refreshTokenRepository.findByUser(user)
+        RefreshToken storedRefreshToken = refreshTokenRepository.findFirstByUserOrderByExpiryDateDesc(user)
                 .orElseThrow(() -> new BadCredentialsException("RefreshToken이 존재하지 않습니다."));
 
         jwtTokenProvider.invalidateRefreshToken(storedRefreshToken.getToken());
@@ -197,4 +172,89 @@ public class UserService {
     private boolean isRefreshTokenBlacklisted(String refreshToken) {
         return tokenBlacklistRepository.existsById(refreshToken);
     }
+
+    public User getUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()){
+            return user.get();
+        } else {
+            return null;
+        }
+    }
+
+    // 유저 정보 수정
+    public UserInfoDto updateUserInfo(String email, UserInfoDto userInfoDto) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
+
+        if (userInfoDto.getNickname() != null) {
+            user.setNickname(userInfoDto.getNickname());
+        }
+        if (userInfoDto.getLocationId() != null) {
+            Location location = getLocationById(userInfoDto.getLocationId());
+            user.setLocationId(location);
+        }
+        if (userInfoDto.getCategoryId() != null) {
+            Category category = getCategoryById(userInfoDto.getCategoryId());
+            user.setCategoryId(category);
+        }
+
+        if (userInfoDto.getImage() != null) {
+            user.setImage(userInfoDto.getImage());
+        }
+        if (userInfoDto.getIntroduction() != null) {
+            user.setIntroduction(userInfoDto.getIntroduction());
+        }
+
+        User updatedUser = userRepository.save(user);
+
+        return UserInfoDto.builder()
+                .nickname(updatedUser.getNickname())
+                .locationId(updatedUser.getLocationId().getLocationId())
+                .categoryId(updatedUser.getCategoryId().getCategoryId())
+                .image(updatedUser.getImage())
+                .introduction(updatedUser.getIntroduction())
+                .build();
+    }
+
+    private Location getLocationById(Long locationId) {
+        return locationRepository.findById(locationId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 위치를 찾을 수 없습니다."));
+    }
+
+    private Category getCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 카테고리를 찾을 수 없습니다."));
+    }
+
+    private ProfileImage getRandomProfileImage(){
+        List<ProfileImage> allProfileImages = profileImageRepository.findAll();
+
+        Random random = new Random();
+        int randomIdx = random.nextInt(allProfileImages.size());
+        return allProfileImages.get(randomIdx);
+    }
+
+    public UserInfoResponse getUserInfo(String email) {
+        User user = userRepository.findByEmailAndIsDeletedFalse(email)
+                .orElseThrow(() -> new UserNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        return new UserInfoResponse(user.getUserId(), user.getNickname(), user.getEmail(),  user.getImage(), user.getLocationId(),user.getCategoryId(),user.getIntroduction());
+    }
+
+    public List<JoinGroupDto> getJoinedGroups(User user) {
+        List<GroupMember> groupMembers = groupMemberRepository.findByUserId(user);
+
+        return groupMembers.stream()
+                .map(groupMember -> new JoinGroupDto(groupMember.getGroupId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<JoinGroupDto> getBookmarkedGroups(User user) {
+        List<Bookmark> bookmarks = bookmarkRepository.findByUserId(user);
+        return bookmarks.stream()
+                .map(bookmark -> new JoinGroupDto(bookmark.getGroupId()))
+                .collect(Collectors.toList());
+    }
+
 }

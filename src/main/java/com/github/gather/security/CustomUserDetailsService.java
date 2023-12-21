@@ -1,7 +1,7 @@
 package com.github.gather.security;
 
 import com.github.gather.entity.User;
-import com.github.gather.repositroy.UserRepository;
+import com.github.gather.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

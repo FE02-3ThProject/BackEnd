@@ -1,4 +1,4 @@
-package com.github.gather.dto.response;
+package com.github.gather.dto.response.user;
 
 import com.github.gather.entity.Location;
 import com.github.gather.entity.Role.UserRole;
@@ -12,7 +12,6 @@ import lombok.*;
 public class UserLoginResponse {
     private String email;
     private String nickname;
-    private String phoneNumber;
     private Location location;
     private String image;
     private UserRole userRole;

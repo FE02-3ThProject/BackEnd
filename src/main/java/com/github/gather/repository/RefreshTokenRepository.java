@@ -1,4 +1,4 @@
-package com.github.gather.repositroy;
+package com.github.gather.repository;
 
 import com.github.gather.entity.RefreshToken;
 import com.github.gather.entity.User;
@@ -17,4 +17,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken,Long>
     Optional<RefreshToken> findFirstByUserOrderByExpiryDateDesc(User user);
 
 
+
+    Optional<RefreshToken> findFirstByUser_UserIdOrderByExpiryDateDesc(Long userId);
 }
