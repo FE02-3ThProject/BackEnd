@@ -1,51 +1,46 @@
+
 spring:
   datasource:
-    username: backend2team
-    password: supercoding09
-    url: jdbc:mariadb://db-project3.cryqvukdhzno.ap-northeast-2.rds.amazonaws.com:3306/communityRoom
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
     tomcat:
       validation-query: "select 1"
-
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     database-platform: org.hibernate.dialect.MariaDBDialect
-
-
   servlet:
     multipart:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
 
+  secret-key: ${SECRET-KEY}
 
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id:
-            client-secret:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: profile, email
 
-    secret-key: supercoding
+security:
 
-aws:
-  accessKeyId: AKIA2WSJ73WOI2ZIWIMW
-  secretKey: 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
-  region: ap-northeast-2
+  accessKeyId: ${AWS_ACCESS_KEY_ID}
+  secretKey: ${AWS_SECRET_KEY}
+  region: ${AWS_REGION}
   s3:
-    bucketName: project2team
+    bucketName: ${AWS_BUCKET_NAME}
 
 logging:
   level:
     org.springframework.security: DEBUG
-
 server:
   port: 9090
 management:
   server:
     port: 8080
-
-
