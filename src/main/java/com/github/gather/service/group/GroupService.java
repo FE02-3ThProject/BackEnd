@@ -5,14 +5,16 @@ import com.github.gather.dto.request.group.UpdateGroupInfoRequest;
 import com.github.gather.dto.response.group.*;
 import com.github.gather.entity.GroupTable;
 import com.github.gather.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface GroupService {
-    CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest);
+    CreatedGroupResponse createGroup(String userEmail, CreateGroupRequest newGroupRequest, MultipartFile file) ;
 
 
-    UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfoRequest);
+    UpdatedGroupInfoResponse modifyGroupInfo(String userEmail, Long groupId, UpdateGroupInfoRequest updateGroupInfoRequest, MultipartFile newImage);
 
     String deleteGroup(String userEmail, Long groupId);
 
