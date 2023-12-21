@@ -24,22 +24,6 @@ public class UserCategoryService {
     }
 }
 
-    // 카테고리별 모임 조회
-//    public Long getCategoryId(Long categoryId){
-//        Category category = getCategoryById(categoryId);
-//        return category.getCategoryId();
-//    }
-//
-//    public String getCategoryName(Long categoryId) {
-//        Category category = getCategoryById(categoryId);
-//        return category.getName();
-
-
-    // Search for the category corresponding to a specific ID
-//    private Category getCategoryById(Long categoryId) {
-//        return UserCategoryRepository.(() -> new CategoryNotFoundException("Category not found. ID: " + categoryId));
-//    }
-
 
 //    // 카테고리별 모임 조회
 //    public GroupCategoryResponse getCategoryInfo(Long categoryId) {

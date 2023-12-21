@@ -76,4 +76,8 @@ public class UserGroup {
         userGroup.setGroupId(userGroupTable.getGroupId());
         return userGroup;
     }
+
+    public List<User> retrieveBookmarkedUsers() {
+        return bookmarkedUsers;
+    }
 }

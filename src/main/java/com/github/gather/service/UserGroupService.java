@@ -1,20 +1,16 @@
 package com.github.gather.service;
 
-import com.github.gather.dto.response.BookMarkResponse;
 import com.github.gather.entity.*;
 import com.github.gather.exception.UserNotFoundException;
 import com.github.gather.repositroy.BookmarkRepository;
-import com.github.gather.repositroy.GroupTableRepository;
 import com.github.gather.repositroy.UserGroupRepository;
 import com.github.gather.repositroy.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -34,41 +30,33 @@ public class UserGroupService {
     }
 
 
-    public List<Long> getGroupIdsFromJoinedUserGroups(String email) {
-        List<GroupTable> joinedUserGroups = getJoinedUserGroups(email);
-
-        // Extract group_id values from GroupTable objects
-        List<Long> groupIds = joinedUserGroups.stream()
-                .map(GroupTable::getGroupId)
-                .collect(Collectors.toList());
-
-        return groupIds;
-    }
-
     // 사용자가 가입한 그룹 목록을 가져오는 메서드
-    public List<GroupTable> getJoinedUserGroups(String email) {
+    public List<Long> getJoinedUserGroupIds(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
 
-        // Return the list of groups the user has joined
-        return Optional.ofNullable(user.getUserGroups())
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(UserGroup::getGroup)
+        // UserGroupTable에서 groupId 값을 추출하여 반환
+        List<Long> joinedGroupIds = user.getJoinGroups().stream()
+                .map(UserGroupTable::getGroupId)
                 .collect(Collectors.toList());
+
+        return Collections.unmodifiableList(new ArrayList<>(joinedGroupIds));
     }
 
-    // 사용자가 즐겨찾은 그룹 목록을 가져오는 메서드
-    public List<Bookmark> getBookmarkedUserGroups(String email) {
+
+
+    // 사용자의 즐겨찾기한 그룹의 groupId 목록을 가져오는 메서드
+// 사용자의 즐겨찾기한 그룹의 groupId 목록을 가져오는 메서드
+    public List<Long> getBookmarkedUserGroupIds(String email) {
         List<Bookmark> bookmarks = bookmarkRepository.findByUserEmail(email);
-        if (bookmarks.isEmpty()) {
-            // If the user is not found, you can return an empty list or do other processing.
-            return Collections.emptyList();
-        }
-        return bookmarks;
+
+        // Bookmark에서 groupId 필드에 직접 접근하여 값을 추출하여 반환
+        List<Long> bookmarkedGroupIds = bookmarks.stream()
+                .map(bookmark -> bookmark.getBookmarkIdx())
+                .collect(Collectors.toList());
+
+        return bookmarkedGroupIds;
     }
-
-
 
 
     // 모임 즐겨찾기 삭제
@@ -79,10 +67,7 @@ public class UserGroupService {
                     userGroupRepository.save(userGroup);
                     return userGroup;
                 })
-                .orElseThrow(() -> new UserNotFoundException("그룹을 찾을 수 없습니다: " + groupId));
+                .orElseThrow(() -> new UserNotFoundException("모임을 찾을 수 없습니다: " + groupId));
     }
 
-
 }
-
-
