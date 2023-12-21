@@ -44,7 +44,7 @@ public class TokenService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // Response 헤더에 새로운 AccessToken을 실어서 보내줄 수 있음
-            response.setHeader("New-Access-Token", newAccessToken);
+            response.setHeader("NewAccessToken", newAccessToken);
             return "토큰 재발급 완료";
         } else {
             return "검증되지 않은 토큰";
