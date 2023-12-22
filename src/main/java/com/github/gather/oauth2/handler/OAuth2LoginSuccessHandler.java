@@ -21,12 +21,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//        try {
-//            CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-//            loginSuccess(response, oAuth2User); // 로그인에 성공한 경우 access, refresh 토큰 생성
-//        } catch (Exception e) {
-//            throw e;
-//        }
         try {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 

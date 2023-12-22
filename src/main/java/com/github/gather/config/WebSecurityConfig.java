@@ -48,6 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/group/**").permitAll()
                 .antMatchers("/api/newToken").permitAll()
                 .antMatchers("/api/user-group").permitAll()
+                .antMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .antMatchers("/chat").permitAll()
                 .antMatchers("/api/bookmark").permitAll()
                 .antMatchers("/chat/**").permitAll()

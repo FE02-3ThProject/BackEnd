@@ -4,6 +4,8 @@ import com.github.gather.dto.MessageDto;
 import com.github.gather.entity.User;
 import com.github.gather.service.AuthService;
 import com.github.gather.service.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 
+@Tag(name = "ChatRoom",description = "채팅방 API")
 @Slf4j
 @RestController
 @RequestMapping("/chat")
@@ -30,7 +33,7 @@ public class ChatController {
         this.authService = authService;
     }
 
-    // 채팅방 입장
+    @Operation(summary = "채팅방 입장" , description = "채팅방 입장을 진행합니다.")
     @PostMapping("/enter/{roomId}")
     public ResponseEntity<Void> enterChatRoom(@PathVariable Long roomId, HttpServletRequest request) {
         User user = authService.checkToken(request);
@@ -39,7 +42,7 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-    // 채팅방 퇴장
+    @Operation(summary = "채팅방 퇴장" , description = "채팅방 퇴장을 진행합니다.")
     @PostMapping("/leave/{roomId}")
     public ResponseEntity<Void> leaveChatRoom(@PathVariable Long roomId, HttpServletRequest request) {
         User user = authService.checkToken(request);
@@ -47,6 +50,7 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "메세지 전달" , description = "메세지 전달을 진행합니다.")
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/{roomId}")
     public MessageDto send(MessageDto messageDto, @AuthenticationPrincipal Principal principal) {

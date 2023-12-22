@@ -6,13 +6,15 @@ import com.github.gather.entity.User;
 import com.github.gather.service.AuthService;
 import com.github.gather.service.GroupTableService;
 import com.github.gather.service.NoticeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-
+@Tag(name = "GroupNotice",description = "모임 공지 API")
 @RestController
 @RequestMapping("/api/group")
 public class NoticeController {
@@ -27,7 +29,7 @@ public class NoticeController {
         this.groupTableService = groupTableService;
     }
 
-    // 공지 등록
+    @Operation(summary = "공지사항 등록" , description = "공지사항 등록을 진행합니다.")
     @PostMapping("/{groupId}/notice")
     public ResponseEntity<NoticeDto> createNotice(@PathVariable Long groupId, @RequestBody NoticeDto noticeDto, HttpServletRequest request) {
         User user = authService.checkToken(request);
@@ -36,19 +38,19 @@ public class NoticeController {
         return ResponseEntity.ok(newNoticeDto);
     }
 
-    // 공지 조회(전체)
+    @Operation(summary = "전체 공지사항 조회" , description = "전체 공지사항 조회를 진행합니다.")
     @GetMapping("/{groupId}/notice")
     public List<NoticeDto> getAllNotices(@PathVariable Long groupId) {
         return noticeService.getAllNoticesByGroup(groupId);
     }
 
-    // 공지 조회(특정)
+    @Operation(summary = "특정 공지사항 조회" , description = "특정 공지사항 조회를 진행합니다.")
     @GetMapping("/{groupId}/notice/{noticeIdx}")
     public NoticeDto getNotice(@PathVariable Long groupId, @PathVariable Long noticeIdx) {
         return noticeService.getNotice(noticeIdx);
     }
 
-    // 공지 수정
+    @Operation(summary = "공지사항 수정" , description = "공지사항 수정을 진행합니다.")
     @PutMapping("/{groupId}/notice/{noticeIdx}")
     public ResponseEntity<NoticeDto> updateNotice(@PathVariable Long groupId, @PathVariable Long noticeIdx, @RequestBody NoticeDto noticeDto, HttpServletRequest request) {
         User user = authService.checkToken(request);
@@ -56,7 +58,7 @@ public class NoticeController {
         return ResponseEntity.ok(updatedNotice);
     }
 
-    // 공지 삭제
+    @Operation(summary = "공지사항 삭제" , description = "공지사항 삭제를 진행합니다.")
     @DeleteMapping("/{groupId}/notice/{noticeIdx}")
     public ResponseEntity<Void> deleteNotice(@PathVariable Long groupId, @PathVariable Long noticeIdx, HttpServletRequest request) {
         User user = authService.checkToken(request);

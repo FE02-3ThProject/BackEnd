@@ -3,6 +3,8 @@ package com.github.gather.controller;
 import com.github.gather.entity.User;
 import com.github.gather.service.AuthService;
 import com.github.gather.service.GroupMembershipService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Tag(name = "GroupMembership",description = "모임가입 및 탈퇴 API")
 @RestController
 @RequestMapping("/api/group")
 public class GroupMembershipController {
@@ -23,7 +26,7 @@ public class GroupMembershipController {
         this.authService = authService;
     }
 
-    // 모임 가입
+    @Operation(summary = "모임 가입" , description = "모임 가입을 진행합니다.")
     @PostMapping("/{groupId}/join")
     public ResponseEntity<?> joinGroup(@PathVariable Long groupId, HttpServletRequest request) {
         User user = authService.checkToken(request);
@@ -31,7 +34,7 @@ public class GroupMembershipController {
         return ResponseEntity.ok().build();
     }
 
-    // 모임 탈퇴
+    @Operation(summary = "모임 탈퇴" , description = "모임 탈퇴를 진행합니다.")
     @PostMapping("/{groupId}/leave")
     public ResponseEntity<?> leaveGroup(@PathVariable Long groupId, HttpServletRequest request) {
         User user = authService.checkToken(request);
