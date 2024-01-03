@@ -30,6 +30,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	implementation 'mysql:mysql-connector-java:8.0.23' // mysql jdbc 드라이버 의존성 추가
+
 	implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.3'  // MariaDB JDBC 드라이버 의존성 추가
 //	runtimeOnly 'com.mysql:mysql-connector-j'
 	//   Spring Security & JWT
