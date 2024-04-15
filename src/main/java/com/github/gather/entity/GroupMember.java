@@ -1,5 +1,6 @@
 package com.github.gather.entity;
 
+import com.github.gather.entity.Role.GroupMemberRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,16 @@ public class GroupMember {
     private GroupTable groupId;
 
     @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private GroupMemberRole role;
+    
+    public GroupMember(User userId, GroupTable groupId, GroupMemberRole role) {
+        this.userId = userId;
+        this.groupId = groupId;
+        this.role = role;
+    }
 
-
+    public void setRole(GroupMemberRole role) {
+        this.role = role;
+    }
 }

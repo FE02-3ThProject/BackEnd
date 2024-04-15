@@ -3,6 +3,9 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     url: ${DB_URL}
+
+    tomcat:
+      validation-query: "select 1"
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,24 +19,39 @@ spring:
 
   secret-key: ${SECRET-KEY}
 
-#security:
-#  jwt:
-#    header:
-#    secret:
-#    token-validity-in-seconds:
-#
-#aws:
-#  accessKeyId:
-#  secretKey:
-#  region:
-#  s3:
-#    bucketName:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: profile, email
+
+security:
+
+  accessKeyId: ${AWS_ACCESS_KEY_ID}
+  secretKey: ${AWS_SECRET_KEY}
+  region: ${AWS_REGION}
+  s3:
+    bucketName: ${AWS_BUCKET_NAME}
 
 logging:
   level:
     org.springframework.security: DEBUG
+server:
+  port: 9090
+management:
+  server:
+    port: 8080
 
 
-
-
-
+springdoc:
+  packages-to-scan: com.github.gather
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
